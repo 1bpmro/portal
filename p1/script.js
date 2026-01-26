@@ -43,20 +43,35 @@ async function fazerLogin() {
 
 function renderizarAlbum(militares) {
     const container = document.getElementById('album');
-    container.innerHTML = ""; // Limpa o carregando
+    container.innerHTML = ""; // Limpa o "Carregando..."
 
     militares.forEach(mil => {
         const card = document.createElement('div');
         card.className = 'militar-card';
-        // Usando os nomes exatos das colunas da sua planilha EFETIVO
-        card.onclick = () => window.open(mil["LINK_FICHA"], "_blank");
+        
+        // Lógica do clique: só abre se tiver link, senão avisa.
+        card.onclick = () => {
+            const link = mil["LINK_FICHA"];
+            if (link && link.trim() !== "" && link.startsWith("http")) {
+                window.open(link, "_blank");
+            } else {
+                alert(`A ficha de ${mil["NOME GUERRA"]} ainda não foi digitalizada pela P1.`);
+            }
+        };
 
+        // Gerando o HTML do card
         card.innerHTML = `
-            <div class="foto-perfil"></div>
+            <div class="foto-perfil">
+                <span style="font-size: 40px; line-height: 120px;">👤</span>
+            </div>
             <span class="graduacao">${mil["GRADUAÇÃO"]}</span>
             <span class="nome-guerra">${mil["NOME GUERRA"]}</span>
-            <small style="color: #666; display:block;">${mil["LOCAL"]}</small>
+            <small style="color: #d4af37; display:block; font-size: 10px; margin-top: 5px;">
+                ${mil["LOCAL"]}
+            </small>
         `;
         container.appendChild(card);
+    });
+}
     });
 }
