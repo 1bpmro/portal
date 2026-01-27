@@ -3,96 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P1 - Álbum do Efetivo | 1º BPM</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <style>
-        /* Estilos específicos para o Álbum */
-        .grid-album {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            padding: 20px;
-        }
-        .militar-card {
-            background: #252525;
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid #333;
-            transition: 0.2s;
-        }
-        .militar-card:hover { border-color: #d4af37; transform: scale(1.05); }
-        .foto-perfil {
-            width: 100%;
-            aspect-ratio: 3/4;
-            background: #111;
-            border-radius: 5px;
-            margin-bottom: 8px;
-            object-fit: cover;
-        }
-        .graduacao { color: #d4af37; font-size: 0.8rem; font-weight: bold; }
-        .nome-guerra { font-size: 1rem; display: block; margin-top: 2px; }
-        .search-bar { width: 90%; padding: 12px; margin: 20px auto; display: block; border-radius: 25px; border: none; background: #333; color: white; }
-        .hidden { display: none !important; }
-
-#login-container {
-    height: 80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.login-box {
-    background: #252525;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-
-.login-box input {
-    display: block;
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 10px;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    color: white;
-}
-    </style>
+    <title>Acesso - 1º BPM</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <header>
-        <a href="../index.html" style="color: #999; text-decoration: none;">← Voltar ao Início</a>
-        <h1>Álbum do Efetivo - 1º BPM</h1>
-    </header>
-
-    <input type="text" id="inputBusca" class="search-bar" placeholder="🔍 Digite Nome de Guerra ou Matrícula..." onkeyup="filtrarAlbum()">
-
-    <div id="album" class="grid-album">
-        <div class="militar-card" onclick="abrirFicha('100094651')">
-            <div class="foto-perfil"></div> <span class="graduacao">TEN CEL PM</span>
-            <span class="nome-guerra">MIRANDA</span>
+    <div class="login-container">
+        <div class="login-box">
+            <img src="assets/brasao.png" alt="1º BPM" class="logo">
+            <h2>Portal do Batalhão</h2>
+            <p>Identifique-se para acessar as seções</p>
+            
+            <input type="number" id="matricula" placeholder="Matrícula">
+            <input type="password" id="senha" placeholder="Senha">
+            
+            <button onclick="autenticar()">Acessar Sistema</button>
+            <div id="mensagem-erro" class="erro"></div>
         </div>
     </div>
 
-    <script>
-        // Função para filtro instantâneo
-        function filtrarAlbum() {
-            let input = document.getElementById('inputBusca').value.toLowerCase();
-            let cards = document.getElementsByClassName('militar-card');
-            
-            for (let i = 0; i < cards.length; i++) {
-                let nome = cards[i].innerText.toLowerCase();
-                cards[i].style.display = nome.includes(input) ? "" : "none";
-            }
-        }
-
-        function abrirFicha(matricula) {
-            // Aqui entrará a lógica de conferir nível de acesso antes de abrir
-            alert("Solicitando acesso à ficha da matrícula: " + matricula);
-        }
-    </script>
+    <script src="js/auth.js"></script>
 </body>
 </html>
