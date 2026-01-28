@@ -9,24 +9,34 @@
 <body>
 
     <div class="login-container">
-       <div class="login-box">
-  <div style="display: flex; justify-content: center; gap: 20px; align-items: center; margin-bottom: 20px;">
-    <img src="https://rondonia.ro.gov.br/wp-content/uploads/2024/09/Brasao-PMRO-370x523.png" style="height: 70px; width: auto;">
-    <img src="https://museu.pm.ro.gov.br/wp-content/uploads/2024/05/1-bpm-3.png" style="height: 70px; width: auto;">
-</div>
-    <h2>Portal 1º BPM</h2>
-    <p>Sistema Integrado de Gestão</p>
-    
-    <input type="number" id="matricula" placeholder="Matrícula">
-    <input type="password" id="senha" placeholder="Senha">
-    
-    <button onclick="autenticar()">Acessar Sistema</button>
-    <div id="mensagem-erro" class="erro"></div>
-</div>
+        <div class="login-box">
+            <div style="display: flex; justify-content: center; gap: 20px; align-items: center; margin-bottom: 20px;">
+                <img src="https://rondonia.ro.gov.br/wp-content/uploads/2024/09/Brasao-PMRO-370x523.png" style="height: 70px; width: auto;">
+                <img src="https://museu.pm.ro.gov.br/wp-content/uploads/2024/05/1-bpm-3.png" style="height: 70px; width: auto;">
+            </div>
+            <h2>Portal 1º BPM</h2>
+            <p>Sistema Integrado de Gestão</p>
+            
+            <input type="number" id="matricula" placeholder="Matrícula">
+            <input type="password" id="senha" placeholder="Senha">
+            
+            <button type="button" class="btn-login" onclick="login()">Acessar Sistema</button>
+            
+            <div id="mensagem-erro" class="erro"></div>
+        </div>
     </div>
 
     <script src="js/config.js"></script>
-<script src="js/auth.js"></script>
+    <script src="js/auth.js"></script>
+    
+    <script>
+        // Atalho: permite fazer login apertando a tecla "Enter"
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+    </script>
     
 </body>
 </html>
