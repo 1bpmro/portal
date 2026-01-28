@@ -1,7 +1,8 @@
-// 1. Declaramos as variáveis no topo para que todas as funções (inclusive o filtrar) consigam ler
+// 1. Declaramos as variáveis no topo para que todas as funções consigam acessar os dados
 const user = JSON.parse(sessionStorage.getItem("militar_logado"));
 const listaEfetivo = JSON.parse(sessionStorage.getItem("lista_efetivo"));
 
+// Aguarda o HTML carregar completamente antes de rodar o script
 document.addEventListener("DOMContentLoaded", function() {
     // 2. Verifica se o usuário está logado
     if (!user) {
@@ -9,18 +10,21 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
     }
 
-    // 3. Atualiza o nome na barra superior
+    // 3. Atualiza o nome na barra superior (usando o campo da aba CONTROLE_ACESSO)
     const labelUsuario = document.getElementById('usuario-logado');
     if (labelUsuario) {
         labelUsuario.innerText = `P1 - Olá, ${user.nomeGuerra || 'ADMIN'}`;
     }
 
-    // 4. Renderiza os cards iniciais
+    // 4. Renderiza os cards iniciais se a lista existir
     if (listaEfetivo) {
         renderizarCards(listaEfetivo);
+    } else {
+        console.error("Lista de efetivo não encontrada no sessionStorage.");
     }
 });
 
+// Função que cria os cards na tela
 function renderizarCards(dados) {
     const container = document.getElementById('container-cards');
     if (!container) return;
@@ -31,12 +35,13 @@ function renderizarCards(dados) {
         const card = document.createElement('div');
         card.className = 'militar-card';
         
-        // Usando os nomes exatos da sua planilha com colchetes por causa dos espaços/acentos
+        // Usando a matrícula para abrir a ficha futuramente
         card.onclick = () => abrirFicha(mil["MATRÍCULA"]);
 
-        // Busca a foto na última coluna "FOTO"
+        // Busca a foto na coluna "FOTO" (coluna AN)
         const linkFoto = mil["FOTO"] || "https://cdn-icons-png.flaticon.com/512/1053/1053244.png";
 
+        // Monta o visual do card respeitando os nomes das colunas da sua planilha
         card.innerHTML = `
             <div class="foto-container">
                 <img src="${linkFoto}" alt="Foto de ${mil["NOME GUERRA"]}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1053/1053244.png'">
@@ -50,11 +55,14 @@ function renderizarCards(dados) {
     });
 }
 
+// Função de busca (filtra por nome, graduação ou matrícula)
 function filtrar() {
+    if (!listaEfetivo) return;
+
     const termo = document.getElementById('busca').value.toLowerCase();
     
     const filtrados = listaEfetivo.filter(mil => {
-        // Ajustado para os nomes reais das colunas
+        // Mapeamos os campos exatos da sua planilha para a busca
         const n = (mil["NOME GUERRA"] || "").toString().toLowerCase();
         const g = (mil["GRADUAÇÃO"] || "").toString().toLowerCase();
         const m = (mil["MATRÍCULA"] || "").toString().toLowerCase();
@@ -65,15 +73,18 @@ function filtrar() {
     renderizarCards(filtrados);
 }
 
+// Função para abrir a ficha detalhada
 function abrirFicha(matricula) {
     if(!matricula) {
         alert("Matrícula não encontrada para este militar.");
         return;
     }
-    // Salvamos a matrícula selecionada para a próxima página saber quem carregar
+    // Salva a matrícula para ser usada na página de detalhes
     sessionStorage.setItem("matricula_selecionada", matricula);
+    
+    // Alerta temporário antes de criarmos o arquivo ficha.html
     alert("Abrindo ficha da matrícula: " + matricula);
     
-    // O próximo passo será criar este arquivo ficha.html
+    // Descomente a linha abaixo quando criarmos a página ficha.html
     // window.location.href = "ficha.html";
 }
