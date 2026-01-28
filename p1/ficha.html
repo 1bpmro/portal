@@ -6,44 +6,51 @@
     <title>Ficha do Militar - P1</title>
     <link rel="stylesheet" href="../css/style.css">
     <script src="../js/config.js"></script> 
-
     <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; margin: 0; }
         
         .toolbar { 
-            position: sticky; top: 0; background: white; padding: 15px 20px; 
+            position: fixed; top: 0; left: 0; right: 0; background: white; padding: 10px 20px; 
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 2000;
         }
 
-        .ficha-container { max-width: 1000px; margin: 20px auto; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); overflow: hidden; padding-bottom: 30px; }
-        .ficha-header { background: #1a5c37; color: white; padding: 25px; display: flex; align-items: center; gap: 25px; }
-        .foto-container { position: relative; }
-        .foto-perfil { width: 140px; height: 180px; background: #ddd; border: 3px solid white; object-fit: cover; border-radius: 5px; cursor: pointer; transition: 0.3s; }
-        
-        /* Feedback visual para edição de foto */
-        .modo-edicao .foto-perfil:hover { filter: brightness(0.6); }
-        .modo-edicao .foto-container::after { content: "ALTERAR FOTO"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; font-size: 12px; pointer-events: none; opacity: 0; transition: 0.3s; }
-        .modo-edicao .foto-container:hover::after { opacity: 1; }
+        /* FICHA AJUSTADA PARA NÃO OCULTAR DADOS */
+        .ficha-container { 
+            max-width: 1000px; 
+            margin: 100px auto 30px; /* Margem superior para não sumir atrás da toolbar */
+            background: white; 
+            border-radius: 10px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+            padding-bottom: 40px;
+            min-height: auto; /* Deixa crescer livremente */
+        }
 
-        .secao-titulo { background: #eee; padding: 10px 20px; font-weight: bold; color: #1a5c37; border-left: 5px solid #1a5c37; margin-top: 10px; }
-        .dados-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; padding: 20px; }
-        .item-dado { border-bottom: 1px solid #f0f0f0; padding: 5px 0; display: flex; flex-direction: column; }
-        .label { font-weight: bold; color: #555; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 2px; }
-        
-        .valor-input { border: 1px solid transparent; background: transparent; font-size: 0.95rem; color: #000; font-weight: 500; padding: 5px; width: 100%; outline: none; transition: 0.2s; }
-        .modo-edicao .valor-input { border: 1px solid #ccc; background: #fffdf2; border-radius: 4px; }
+        .ficha-header { background: #1a5c37; color: white; padding: 30px; display: flex; align-items: center; gap: 25px; border-radius: 10px 10px 0 0; }
+        .foto-perfil { width: 140px; height: 180px; border: 3px solid white; object-fit: cover; border-radius: 5px; }
 
-        .btn { border: none; padding: 10px 18px; border-radius: 5px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 14px; text-decoration: none; }
+        .secao-titulo { background: #eee; padding: 12px 20px; font-weight: bold; color: #1a5c37; border-left: 5px solid #1a5c37; margin-top: 15px; }
+        
+        /* GRID QUE NÃO CORTA CONTEÚDO */
+        .dados-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 20px; 
+            padding: 20px; 
+        }
+
+        .item-dado { border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
+        .label { font-weight: bold; color: #666; font-size: 0.75rem; text-transform: uppercase; }
+        .valor-input { border: 1px solid transparent; background: transparent; font-size: 1rem; color: #000; padding: 5px 0; width: 100%; outline: none; }
+        
+        .modo-edicao .valor-input { border: 1px solid #ccc; background: #fffdf2; padding: 5px; border-radius: 4px; }
+
+        .btn { border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 14px; }
         .btn-voltar { background: #333; color: white; }
         .btn-alterar { background: #f0ad4e; color: white; }
         .btn-salvar { background: #28a745; color: white; display: none; }
-        .btn-imprimir { background: #1a5c37; color: white; }
 
-        .historico-container { padding: 20px; background: #f9f9f9; margin: 0 20px; border-radius: 5px; border: 1px dashed #ccc; }
-        .hist-item { font-size: 0.85rem; color: #666; margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px solid #eee; }
-
-        @media print { .toolbar { display: none; } .ficha-container { box-shadow: none; border: 1px solid #ccc; } }
+        @media print { .toolbar { display: none; } .ficha-container { margin-top: 0; } }
     </style>
 </head>
 <body>
@@ -51,187 +58,16 @@
     <div class="toolbar">
         <div style="display: flex; gap: 10px;">
             <a href="index.html" class="btn btn-voltar">⬅ Voltar</a>
-            <button class="btn btn-imprimir" onclick="window.print()">🖨 Imprimir</button>
+            <button class="btn btn-alterar" id="btnAlterar" onclick="ativarEdicao()">✏️ EDITAR</button>
+            <button class="btn btn-salvar" id="btnSalvar" onclick="salvarFicha()">💾 SALVAR</button>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <button id="btnAlterar" class="btn btn-alterar" onclick="ativarEdicao()">✏️ EDITAR/ALTERAR</button>
-            <button id="btnSalvar" class="btn btn-salvar" onclick="salvarFicha()">💾 SALVAR ALTERAÇÕES</button>
-        </div>
+        <button class="btn" style="background:#1a5c37; color:white;" onclick="window.print()">🖨 IMPRIMIR</button>
     </div>
 
     <div class="ficha-container" id="conteudo-ficha"></div>
 
-    <div class="historico-container" id="container-historico" style="max-width: 1000px; margin: 10px auto;">
-        <div class="label" style="margin-bottom: 10px;">Histórico de Alterações (Sessão Atual)</div>
-        <div id="lista-historico">
-            <div class="hist-item">📅 Ficha carregada com sucesso.</div>
-        </div>
-    </div>
-
-    <script>
-        let militarOriginal = null;
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const matricula = sessionStorage.getItem("matricula_selecionada");
-            const efetivo = JSON.parse(sessionStorage.getItem("lista_efetivo"));
-            
-            if (!efetivo || !matricula) {
-                window.location.href = "index.html";
-                return;
-            }
-
-            militarOriginal = efetivo.find(m => m["MATRÍCULA"] && m["MATRÍCULA"].toString() === matricula.toString());
-
-            if (!militarOriginal) {
-                document.getElementById('conteudo-ficha').innerHTML = "<h1 style='padding:20px'>Militar não encontrado.</h1>";
-                return;
-            }
-
-            renderizarDados(militarOriginal);
-        });
-
-        function renderizarDados(mil) {
-            const container = document.getElementById('conteudo-ficha');
-            container.innerHTML = `
-                <div class="ficha-header">
-                    <div class="foto-container" onclick="alterarFoto()">
-                        <img id="imgPerfil" src="${mil["FOTO"] || ''}" class="foto-perfil" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1053/1053244.png'">
-                    </div>
-                    <div>
-                        <h1 style="margin:0">${mil["GRADUAÇÃO"]} ${mil["NOME GUERRA"]}</h1>
-                        <p style="margin:5px 0; font-size: 1.2rem;">Matrícula: ${mil["MATRÍCULA"]}</p>
-                    </div>
-                </div>
-
-                <div class="secao-titulo">DADOS PESSOAIS</div>
-                <div class="dados-grid">
-                    ${campo("Nome Completo", mil["NOME COMPLETO"])}
-                    ${campo("CPF", mil["CPF"])}
-                    ${campo("RG", mil["RG"])}
-                    ${campo("Nascimento", mil["NASCIMENTO"])}
-                    ${campo("Naturalidade", mil["NATURALIDADE"])}
-                    ${campo("T. Sangue", mil["T. SANGUE"])}
-                    ${campo("Sexo", mil["SEXO"])}
-                </div>
-
-                <div class="secao-titulo">CONTATO E ENDEREÇO</div>
-                <div class="dados-grid">
-                    ${campo("Endereço", mil["ENDEREÇO"])}
-                    ${campo("Telefone 1", mil["TELEFONE"])}
-                    ${campo("Telefone 2", mil["TELEFONE 2"])}
-                    ${campo("E-mail", mil["EMAIL"])}
-                </div>
-
-                <div class="secao-titulo">DADOS PROFISSIONAIS</div>
-                <div class="dados-grid">
-                    ${campo("Função", mil["FUNÇÃO"])}
-                    ${campo("Local", mil["LOCAL"])}
-                    ${campo("Situação", mil["SITUAÇÃO"])}
-                    ${campo("CNH", mil["CNH CAT"])}
-                    ${campo("Escolaridade", mil["ESCOLARIDADE/SIGA"])}
-                    ${campo("Inclusão BPM", mil["INCLUSÃO BPM"])}
-                    ${campo("Antiguidade", mil["ANTIGUID."])}
-                </div>
-
-                <div class="secao-titulo">MEDALHAS E OBSERVAÇÕES</div>
-                <div class="dados-grid" style="grid-template-columns: 1fr;">
-                    ${campo("Medalhas", mil["MEDALHAS"])}
-                    ${campo("Observações", mil["OBSERVAÇÃO"])}
-                </div>
-            `;
-        }
-
-        function campo(label, valor) {
-            return `
-                <div class="item-dado">
-                    <span class="label">${label}</span>
-                    <input type="text" class="valor-input" value="${valor || ''}" readonly data-label="${label}">
-                </div>
-            `;
-        }
-
-        function ativarEdicao() {
-            document.getElementById('conteudo-ficha').classList.add('modo-edicao');
-            const inputs = document.querySelectorAll('.valor-input');
-            inputs.forEach(input => input.readOnly = false);
-
-            document.getElementById('btnAlterar').style.display = 'none';
-            document.getElementById('btnSalvar').style.display = 'flex';
-            alert("Modo de edição habilitado.");
-        }
-
-        function alterarFoto() {
-            if (!document.getElementById('conteudo-ficha').classList.contains('modo-edicao')) return;
-            const novoLink = prompt("Cole a URL da nova foto:", document.getElementById('imgPerfil').src);
-            if (novoLink) document.getElementById('imgPerfil').src = novoLink;
-        }
-
-        async function salvarFicha() {
-            const btnSalvar = document.getElementById('btnSalvar');
-            btnSalvar.innerText = "⏳ SALVANDO...";
-            btnSalvar.disabled = true;
-
-            const inputs = document.querySelectorAll('.valor-input');
-            let dadosEditados = {};
-            
-            inputs.forEach(input => {
-                const label = input.getAttribute('data-label');
-                // Mapeamento De -> Para nomes das colunas da Planilha
-                const mapaColunas = {
-                    "Telefone 1": "TELEFONE",
-                    "Telefone 2": "TELEFONE 2",
-                    "CNH": "CNH CAT",
-                    "Escolaridade": "ESCOLARIDADE/SIGA",
-                    "Antiguidade": "ANTIGUID."
-                };
-                let chave = mapaColunas[label] || label;
-                dadosEditados[chave] = input.value;
-            });
-
-            dadosEditados["FOTO"] = document.getElementById('imgPerfil').src;
-
-            const payload = {
-                action: "updateMilitar",
-                matricula: sessionStorage.getItem("matricula_selecionada"),
-                dados: dadosEditados
-            };
-
-            try {
-                const response = await fetch(CONFIG.URL_GAS, {
-                    method: "POST",
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    alert("✅ Planilha atualizada com sucesso!");
-                    registrarNoLog();
-                    cancelarEdicao();
-                } else {
-                    alert("❌ Erro: " + result.message);
-                }
-            } catch (error) {
-                alert("❌ Erro de conexão com o Google Sheets.");
-            } finally {
-                btnSalvar.innerText = "💾 SALVAR ALTERAÇÕES";
-                btnSalvar.disabled = false;
-            }
-        }
-
-        function registrarNoLog() {
-            const log = document.createElement('div');
-            log.className = 'hist-item';
-            log.innerText = `📅 ${new Date().toLocaleString()}: Alterações salvas no servidor.`;
-            document.getElementById('lista-historico').prepend(log);
-        }
-
-        function cancelarEdicao() {
-            document.getElementById('conteudo-ficha').classList.remove('modo-edicao');
-            document.querySelectorAll('.valor-input').forEach(i => i.readOnly = true);
-            document.getElementById('btnSalvar').style.display = 'none';
-            document.getElementById('btnAlterar').style.display = 'flex';
-        }
+    <script src="p1-script.js"></script> <script>
+        // ... (Mantenha suas funções DOMContentLoaded, renderizarDados e salvarFicha aqui como você já tem)
     </script>
 </body>
 </html>
