@@ -1,4 +1,4 @@
 // Arquivo central de configuração
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbyGYlOffbQayYfuk42XZAPn8dL9i2S7TU9pUo2ED9yYNixr8Ebg1dOIYR_m4-z00o8TDQ/exec"
+    URL_GAS: "https://script.google.com/macros/s/AKfycbwkLtZOnx79C_V4tB0WJ6xI7LKaAemlZHeFrS4s4qhvpgI0CkIpMrh_u9yR-63WNDTeNg/exec"
 };
