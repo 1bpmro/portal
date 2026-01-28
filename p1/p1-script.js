@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function renderizarCards(dados) {
     const container = document.getElementById('container-cards');
-    if (!container) return; // Segurança caso o ID não exista
+    if (!container) return;
     
     container.innerHTML = "";
 
@@ -31,19 +31,19 @@ function renderizarCards(dados) {
         const card = document.createElement('div');
         card.className = 'militar-card';
         
-        // Se na sua planilha o nome da coluna for diferente de MATRICULA (ex: MATRÍCULA com acento), ajuste abaixo
-        card.onclick = () => abrirFicha(mil.MATRICULA || mil["MATRÍCULA"]);
+        // Usando os nomes exatos da sua planilha com colchetes por causa dos espaços/acentos
+        card.onclick = () => abrirFicha(mil["MATRÍCULA"]);
 
-        // Tenta usar a coluna FOTO (coluna AN que você comentou)
-        const linkFoto = mil.FOTO || "https://cdn-icons-png.flaticon.com/512/1053/1053244.png";
+        // Busca a foto na última coluna "FOTO"
+        const linkFoto = mil["FOTO"] || "https://cdn-icons-png.flaticon.com/512/1053/1053244.png";
 
         card.innerHTML = `
             <div class="foto-container">
-                <img src="${linkFoto}" alt="Foto de ${mil.NOME_GUERRA}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1053/1053244.png'">
+                <img src="${linkFoto}" alt="Foto de ${mil["NOME GUERRA"]}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1053/1053244.png'">
             </div>
             <div class="militar-info">
-                <span class="graduacao">${mil.GRADUACAO || ""}</span>
-                <span class="nome-guerra">${mil.NOME_GUERRA || "NÃO CADASTRADO"}</span>
+                <span class="graduacao">${mil["GRADUAÇÃO"] || ""}</span>
+                <span class="nome-guerra">${mil["NOME GUERRA"] || "NÃO CADASTRADO"}</span>
             </div>
         `;
         container.appendChild(card);
@@ -53,11 +53,11 @@ function renderizarCards(dados) {
 function filtrar() {
     const termo = document.getElementById('busca').value.toLowerCase();
     
-    // Agora o 'listaEfetivo' está visível aqui fora
     const filtrados = listaEfetivo.filter(mil => {
-        const n = (mil.NOME_GUERRA || "").toString().toLowerCase();
-        const g = (mil.GRADUACAO || "").toString().toLowerCase();
-        const m = (mil.MATRICULA || mil["MATRÍCULA"] || "").toString().toLowerCase();
+        // Ajustado para os nomes reais das colunas
+        const n = (mil["NOME GUERRA"] || "").toString().toLowerCase();
+        const g = (mil["GRADUAÇÃO"] || "").toString().toLowerCase();
+        const m = (mil["MATRÍCULA"] || "").toString().toLowerCase();
         
         return n.includes(termo) || g.includes(termo) || m.includes(termo);
     });
