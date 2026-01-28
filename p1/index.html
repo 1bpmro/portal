@@ -3,91 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Efetivo 1º BPM</title>
+    <title>Efetivo 1º BPM - P1</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        body { background-color: #f4f7f6; margin: 0; font-family: sans-serif; }
+        /* Reset e Base */
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; }
         
-        /* Navbar Organizada */
-        .navbar { 
-            background: #1a5c37; 
-            color: white; 
-            padding: 10px 20px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            position: sticky; 
-            top: 0; 
+        /* Barra Superior Fixa */
+        .header-p1 {
+            background-color: #1a5c37;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
             z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        .user-info { font-weight: bold; font-size: 0.9rem; }
+        .search-container { display: flex; gap: 10px; align-items: center; }
         
-        .nav-controls { display: flex; gap: 10px; align-items: center; }
-
-        input#busca { 
-            padding: 8px; 
-            border-radius: 5px; 
-            border: none; 
-            width: 250px; 
+        input#busca {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            width: 300px;
+            outline: none;
         }
 
-        .btn-logout { 
-            background: #d9534f; 
-            color: white; 
-            border: none; 
-            padding: 8px 15px; 
-            border-radius: 5px; 
-            cursor: pointer; 
+        .btn-logout {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
             font-weight: bold;
         }
 
-        /* Grade de Cards (Lado a Lado) */
-        .grid-container { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
-            gap: 20px; 
-            padding: 30px; 
-            max-width: 1200px;
-            margin: 0 auto;
+        /* Container do Álbum (Margem superior para não ficar embaixo da barra) */
+        .album-wrapper {
+            margin-top: 80px; 
+            padding: 20px;
+            display: flex;
+            justify-content: center;
         }
 
-        .card { 
-            background: white; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
-            overflow: hidden; 
-            text-align: center; 
-            border: 1px solid #ddd;
+        /* Grade de Fotos - LADO A LADO */
+        .grid-efetivo {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1400px;
         }
 
-        .foto-militar { 
-            width: 100%; 
-            height: 220px; 
-            object-fit: cover; 
-            background: #eee;
+        /* Estilo do Card Individual */
+        .militar-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+            text-align: center;
+            border-bottom: 4px solid #1a5c37;
         }
 
-        .info { padding: 10px; border-top: 2px solid #1a5c37; }
-        .grad { color: #1a5c37; font-weight: bold; font-size: 0.8rem; display: block; }
-        .nome { font-weight: bold; color: #333; font-size: 1rem; }
+        .militar-card:hover { transform: translateY(-5px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+
+        .foto-container { width: 100%; height: 200px; background-color: #e9ecef; }
+        .foto-container img { width: 100%; height: 100%; object-fit: cover; }
+
+        .militar-info { padding: 12px; }
+        .militar-info .graduacao { display: block; font-size: 0.8rem; color: #1a5c37; font-weight: bold; text-transform: uppercase; }
+        .militar-info .nome-guerra { display: block; font-size: 1rem; color: #333; font-weight: bold; margin-top: 2px; }
     </style>
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="user-info" id="boas-vendas">P1 - Carregando...</div>
-        <div class="nav-controls">
-            <input type="text" id="busca" placeholder="🔎 Buscar militar..." onkeyup="filtrar()">
+    <header class="header-p1">
+        <div id="usuario-logado">P1 - 1º BPM</div>
+        <div class="search-container">
+            <input type="text" id="busca" placeholder="🔍 Pesquisar por nome, graduação ou matrícula..." onkeyup="filtrar()">
             <button class="btn-logout" onclick="logout()">Sair</button>
         </div>
-    </div>
+    </header>
 
-    <div class="grid-container" id="album-efetivo">
-        </div>
+    <main class="album-wrapper">
+        <div class="grid-efetivo" id="container-cards">
+            </div>
+    </main>
 
+    <script src="../js/auth.js"></script>
     <script src="p1-script.js"></script>
-    <script src="../js/auth.js"></script> 
 </body>
 </html>
