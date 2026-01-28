@@ -57,4 +57,17 @@ async function autenticar() {
         btn.disabled = false;
         btn.innerText = "Acessar Sistema";
     }
+
+    // Detecta a tecla Enter nos campos de input
+document.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        autenticar();
+    }
+});
+
+// Função de Logout (você usará isso em todas as páginas)
+function logout() {
+    sessionStorage.clear(); // Limpa os dados da memória
+    window.location.href = "../index.html"; // Volta para a tela de login
+}
 }
