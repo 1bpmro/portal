@@ -11,7 +11,6 @@ async function autenticar() {
         return;
     }
 
-    // Visual de carregamento
     btn.innerText = "Autenticando...";
     btn.disabled = true;
     msg.innerText = "";
@@ -29,16 +28,13 @@ async function autenticar() {
             msg.style.color = "#1a5c37";
             msg.innerText = "Acesso autorizado! Redirecionando...";
 
-            // Salva os dados na memória do navegador para usar nas outras páginas
             sessionStorage.setItem("militar_logado", JSON.stringify(result.user));
             sessionStorage.setItem("lista_efetivo", JSON.stringify(result.data));
 
-            // REDIRECIONAMENTO INTELIGENTE
             setTimeout(() => {
                 if (result.user.nivel === "ADMIN" || result.user.nivel === "P1") {
                     window.location.href = "p1/index.html";
                 } else {
-                    // Se for militar padrão, mandaremos para uma página de ficha individual (que criaremos)
                     alert("Acesso padrão: Em breve sua ficha individual estará disponível aqui.");
                     btn.disabled = false;
                     btn.innerText = "Acessar Sistema";
@@ -57,17 +53,19 @@ async function autenticar() {
         btn.disabled = false;
         btn.innerText = "Acessar Sistema";
     }
+} // <--- AQUI TERMINA A FUNÇÃO AUTENTICAR
 
-    // Detecta a tecla Enter nos campos de input
+// ESTES FICAM FORA (NA RAIZ DO ARQUIVO):
+
+// Detecta a tecla Enter nos campos de input
 document.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         autenticar();
     }
 });
 
-// Função de Logout (você usará isso em todas as páginas)
+// Função de Logout
 function logout() {
-    sessionStorage.clear(); // Limpa os dados da memória
-    window.location.href = "../index.html"; // Volta para a tela de login
-}
+    sessionStorage.clear();
+    window.location.href = "../index.html"; 
 }
