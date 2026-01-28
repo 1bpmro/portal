@@ -179,23 +179,81 @@
             }
         }
 
-        function salvarFicha() {
+        async function salvarFicha() {
+    const btnSalvar = document.getElementById('btnSalvar');
+    btnSalvar.innerText = "⏳ SALVANDO...";
+    btnSalvar.disabled = true;
+
+    const matricula = sessionStorage.getItem("matricula_selecionada");
+    const inputs = document.querySelectorAll('.valor-input');
+    const imgPerfil = document.getElementById('imgPerfil');
+    
+    let dadosEditados = {};
+    
+    // Pegamos todos os valores dos inputs e mapeamos de volta para os nomes da planilha
+    inputs.forEach(input => {
+        const labelOriginal = input.getAttribute('data-label');
+        // Mapeamento especial para campos com nomes diferentes na planilha
+        let chavePlanilha = labelOriginal;
+        if(labelOriginal === "Telefone 1") chavePlanilha = "TELEFONE";
+        if(labelOriginal === "Telefone 2") chavePlanilha = "TELEFONE 2";
+        if(labelOriginal === "CNH") chavePlanilha = "CNH CAT";
+        if(labelOriginal === "Escolaridade") chavePlanilha = "ESCOLARIDADE/SIGA";
+        
+        dadosEditados[chavePlanilha] = input.value;
+    });
+
+    // Adiciona a URL da foto se ela foi alterada
+    dadosEditados["FOTO"] = imgPerfil.src;
+
+    const payload = {
+        action: "updateMilitar",
+        matricula: matricula,
+        dados: dadosEditados
+    };
+
+    try {
+        // Substitua pela sua URL do WebApp do Google Script
+        const URL_GAS = "https://script.google.com/macros/s/AKfycbyGYlOffbQayYfuk42XZAPn8dL9i2S7TU9pUo2ED9yYNixr8Ebg1dOIYR_m4-z00o8TDQ/exec"; 
+
+        const response = await fetch(URL_GAS, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert("✅ Sucesso: Dados salvos na planilha!");
+            
+            // Registra no histórico visual
             const agora = new Date().toLocaleString();
             const log = document.createElement('div');
             log.className = 'hist-item';
-            log.innerText = `📅 ${agora}: Alteração nos dados profissionais/pessoais por Administrativo P1.`;
+            log.innerText = `📅 ${agora}: Dados atualizados via Painel Administrativo.`;
             document.getElementById('lista-historico').prepend(log);
 
-            // Aqui você conectará com o Google Apps Script futuramente
-            alert("Salvando alterações na planilha... (Lógica de backend necessária)");
-            
-            // Volta para modo leitura
-            document.getElementById('conteudo-ficha').classList.remove('modo-edicao');
-            document.getElementById('imgPerfil').classList.remove('editavel');
-            document.querySelectorAll('.valor-input').forEach(i => i.readOnly = true);
-            document.getElementById('btnSalvar').style.display = 'none';
-            document.getElementById('btnAlterar').style.display = 'flex';
+            // Finaliza o modo de edição
+            cancelarEdicao();
+        } else {
+            alert("❌ Erro ao salvar: " + result.message);
         }
+    } catch (error) {
+        alert("❌ Erro de conexão com o servidor.");
+        console.error(error);
+    } finally {
+        btnSalvar.innerText = "💾 SALVAR ALTERAÇÕES";
+        btnSalvar.disabled = false;
+    }
+}
+
+function cancelarEdicao() {
+    document.getElementById('conteudo-ficha').classList.remove('modo-edicao');
+    document.getElementById('imgPerfil').classList.remove('editavel');
+    document.querySelectorAll('.valor-input').forEach(i => i.readOnly = true);
+    document.getElementById('btnSalvar').style.display = 'none';
+    document.getElementById('btnAlterar').style.display = 'flex';
+}
     </script>
 </body>
 </html>
