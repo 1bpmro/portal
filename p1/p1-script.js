@@ -1,29 +1,34 @@
-const usuario = JSON.parse(sessionStorage.getItem("militar_logado"));
-const efetivo = JSON.parse(sessionStorage.getItem("lista_efetivo"));
+const user = JSON.parse(sessionStorage.getItem("militar_logado"));
+const listaEfetivo = JSON.parse(sessionStorage.getItem("lista_efetivo"));
 
-if (!usuario) {
+if (!user) {
     window.location.href = "../index.html";
 } else {
-    document.getElementById('boas-vendas').innerText = `P1 - Olá, ${usuario.nomeGuerra}`;
-    renderizarCards(efetivo);
+    document.getElementById('usuario-logado').innerText = `P1 - Olá, ${user.nomeGuerra || 'ADMIN'}`;
+    renderizarCards(listaEfetivo);
 }
 
-function renderizarCards(lista) {
-    const container = document.getElementById('album-efetivo');
-    container.innerHTML = ""; 
+function renderizarCards(dados) {
+    const container = document.getElementById('container-cards');
+    container.innerHTML = "";
 
-    lista.forEach(mil => {
+    dados.forEach(mil => {
+        // Criamos o card
         const card = document.createElement('div');
-        card.className = 'card';
+        card.className = 'militar-card';
         
-        // Ajuste aqui: 'FOTO' deve ser o título exato da sua coluna AN
-        const fotoUrl = mil.FOTO || "https://via.placeholder.com/200x250?text=SEM+FOTO";
+        // Quando clicar no card, abre a ficha (vamos criar essa função depois)
+        card.onclick = () => abrirFicha(mil.MATRICULA);
+
+        const linkFoto = mil.FOTO || "https://cdn-icons-png.flaticon.com/512/1053/1053244.png";
 
         card.innerHTML = `
-            <img src="${fotoUrl}" class="foto-militar">
-            <div class="info">
-                <span class="grad">${mil.GRADUACAO || "MILITAR"}</span>
-                <span class="nome">${mil.NOME_GUERRA || "NOME"}</span>
+            <div class="foto-container">
+                <img src="${linkFoto}" alt="Foto de ${mil.NOME_GUERRA}">
+            </div>
+            <div class="militar-info">
+                <span class="graduacao">${mil.GRADUACAO || ""}</span>
+                <span class="nome-guerra">${mil.NOME_GUERRA || "NÃO CADASTRADO"}</span>
             </div>
         `;
         container.appendChild(card);
@@ -32,9 +37,17 @@ function renderizarCards(lista) {
 
 function filtrar() {
     const termo = document.getElementById('busca').value.toLowerCase();
-    const filtrados = efetivo.filter(mil => 
-        (mil.NOME_GUERRA && mil.NOME_GUERRA.toLowerCase().includes(termo)) || 
-        (mil.GRADUACAO && mil.GRADUACAO.toLowerCase().includes(termo))
-    );
+    const filtrados = listaEfetivo.filter(mil => {
+        const n = (mil.NOME_GUERRA || "").toLowerCase();
+        const g = (mil.GRADUACAO || "").toLowerCase();
+        const m = (mil.MATRICULA || "").toString();
+        return n.includes(termo) || g.includes(termo) || m.includes(termo);
+    });
     renderizarCards(filtrados);
+}
+
+function abrirFicha(matricula) {
+    // Por enquanto apenas um alerta, depois faremos a página da ficha
+    alert("Abrindo ficha da matrícula: " + matricula);
+    // window.location.href = `ficha.html?mat=${matricula}`;
 }
