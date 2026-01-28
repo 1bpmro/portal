@@ -111,10 +111,43 @@
         }
 
         async function salvarFicha() {
-            // Lógica de salvamento via fetch para o CONFIG.URL_GAS
-            alert("Iniciando salvamento...");
-            // Aqui você deve replicar a função salvarFicha() que envia o payload updateMilitar
+    const btn = document.getElementById('btnSalvar');
+    btn.disabled = true;
+    btn.innerText = "⌛ Salvando...";
+
+    const matricula = sessionStorage.getItem("matricula_selecionada");
+    const inputs = document.querySelectorAll('.valor-input[data-label]');
+    const dadosEditados = {};
+
+    inputs.forEach(input => {
+        dadosEditados[input.getAttribute('data-label')] = input.value;
+    });
+
+    try {
+        const response = await fetch(CONFIG.URL_GAS, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: "updateMilitar",
+                matricula: matricula,
+                dados: dadosEditados
+            })
+        });
+
+        const res = await response.json();
+        if (res.success) {
+            alert("Sucesso! Os dados foram salvos na planilha.");
+            location.reload(); // Recarrega para atualizar o sessionStorage
+        } else {
+            alert("Erro: " + res.message);
         }
+    } catch (error) {
+        console.error(error);
+        alert("Erro ao conectar com o servidor.");
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "💾 Salvar";
+    }
+}
     </script>
 </body>
 </html>
