@@ -23,6 +23,7 @@ async function autenticar() {
         });
 
         const result = await response.json();
+        console.log("Resposta do Google:", result);
 
         if (result.success) {
             msg.style.color = "#1a5c37";
