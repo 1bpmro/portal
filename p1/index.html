@@ -3,27 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Efetivo 1º BPM - P1</title>
+    <title>Efetivo 1º BPM</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        /* Estilos específicos para o Álbum */
-        .navbar { background: #1a5c37; color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px; }
-        .card { background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; text-align: center; padding-bottom: 15px; transition: transform 0.2s; }
-        .card:hover { transform: translateY(-5px); }
-        .foto-militar { width: 100%; height: 250px; object-fit: cover; background: #eee; }
-        .info-militar { padding: 10px; }
-        .graduacao { font-weight: bold; color: #1a5c37; display: block; }
-        .nome-guerra { font-size: 1.1rem; color: #333; }
-        .btn-logout { background: #d9534f; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        body { background-color: #f4f7f6; margin: 0; font-family: sans-serif; }
+        
+        /* Navbar Organizada */
+        .navbar { 
+            background: #1a5c37; 
+            color: white; 
+            padding: 10px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .user-info { font-weight: bold; font-size: 0.9rem; }
+        
+        .nav-controls { display: flex; gap: 10px; align-items: center; }
+
+        input#busca { 
+            padding: 8px; 
+            border-radius: 5px; 
+            border: none; 
+            width: 250px; 
+        }
+
+        .btn-logout { 
+            background: #d9534f; 
+            color: white; 
+            border: none; 
+            padding: 8px 15px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-weight: bold;
+        }
+
+        /* Grade de Cards (Lado a Lado) */
+        .grid-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+            gap: 20px; 
+            padding: 30px; 
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card { 
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+            overflow: hidden; 
+            text-align: center; 
+            border: 1px solid #ddd;
+        }
+
+        .foto-militar { 
+            width: 100%; 
+            height: 220px; 
+            object-fit: cover; 
+            background: #eee;
+        }
+
+        .info { padding: 10px; border-top: 2px solid #1a5c37; }
+        .grad { color: #1a5c37; font-weight: bold; font-size: 0.8rem; display: block; }
+        .nome { font-weight: bold; color: #333; font-size: 1rem; }
     </style>
 </head>
 <body>
 
     <div class="navbar">
-        <span id="boas-vendas">Carregando...</span>
-        <div>
-            <input type="text" id="busca" placeholder="Filtrar por nome..." onkeyup="filtrar()" style="width: 200px; padding: 5px; margin-right: 15px; border-radius: 4px; border: none;">
+        <div class="user-info" id="boas-vendas">P1 - Carregando...</div>
+        <div class="nav-controls">
+            <input type="text" id="busca" placeholder="🔎 Buscar militar..." onkeyup="filtrar()">
             <button class="btn-logout" onclick="logout()">Sair</button>
         </div>
     </div>
@@ -32,5 +88,6 @@
         </div>
 
     <script src="p1-script.js"></script>
+    <script src="../js/auth.js"></script> 
 </body>
 </html>
