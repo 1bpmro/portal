@@ -1,71 +1,54 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbw3PpKcMoO2Y9vbuUGjPPuo7nQiFgohEc4w47q2GnuQtXxl5AmRC2Jw_LRHXIGVVJX79g/exec";
-
-async function autenticar() {
+async function login() {
     const mat = document.getElementById('matricula').value;
     const sen = document.getElementById('senha').value;
-    const msg = document.getElementById('mensagem-erro');
-    const btn = document.querySelector('button');
+    const btn = document.querySelector('.btn-login');
 
     if (!mat || !sen) {
-        msg.innerText = "Preencha matrícula e senha.";
+        alert("Preencha todos os campos!");
         return;
     }
 
-    btn.innerText = "Autenticando...";
+    // Feedback visual imediato para combater a sensação de lentidão
+    btn.innerText = "🔌 Conectando...";
     btn.disabled = true;
-    msg.innerText = "";
 
     try {
-        const response = await fetch(API_URL, {
-            method: "POST",
+        // Usa a URL centralizada do config.js
+        const response = await fetch(CONFIG.URL_GAS, {
+            method: 'POST',
             body: JSON.stringify({ matricula: mat, senha: sen })
         });
 
-        const result = await response.json();
-        console.log("Resposta do Google:", result);
+        const res = await response.json();
 
-        if (result.success) {
-            msg.style.color = "#1a5c37";
-            msg.innerText = "Acesso autorizado! Redirecionando...";
+        if (res.success) {
+            // Salva os dados do usuário e a lista do efetivo
+            sessionStorage.setItem('usuario', JSON.stringify(res.user));
+            sessionStorage.setItem('lista_efetivo', JSON.stringify(res.data));
 
-            sessionStorage.setItem("militar_logado", JSON.stringify(result.user));
-            sessionStorage.setItem("lista_efetivo", JSON.stringify(result.data));
-
-            setTimeout(() => {
-                if (result.user.nivel === "ADMIN" || result.user.nivel === "P1") {
-                    window.location.href = "p1/index.html";
-                } else {
-                    alert("Acesso padrão: Em breve sua ficha individual estará disponível aqui.");
-                    btn.disabled = false;
-                    btn.innerText = "Acessar Sistema";
-                }
-            }, 1000);
-
+            // REDIRECIONAMENTO CORRETO:
+            // Se o nível for P1 ou ADMIN, ele DEVE ir para a pasta p1
+            if (res.user.nivel === "P1" || res.user.nivel === "ADMIN") {
+                window.location.href = "p1/index.html";
+            } else {
+                // Se for militar comum, vai para a ficha dele (ou portal comum)
+                sessionStorage.setItem("matricula_selecionada", res.user.matricula);
+                window.location.href = "p1/ficha.html"; 
+            }
         } else {
-            msg.style.color = "#d9534f";
-            msg.innerText = "Matrícula ou senha incorretos.";
+            alert(res.message);
+            btn.innerText = "Entrar";
             btn.disabled = false;
-            btn.innerText = "Acessar Sistema";
         }
-    } catch (error) {
-        console.error(error);
-        msg.innerText = "Erro na conexão com o servidor.";
+    } catch (e) {
+        console.error("Erro no login:", e);
+        alert("Erro de conexão com o servidor. Verifique a URL do GAS.");
+        btn.innerText = "Entrar";
         btn.disabled = false;
-        btn.innerText = "Acessar Sistema";
     }
-} // <--- AQUI TERMINA A FUNÇÃO AUTENTICAR
+}
 
-// ESTES FICAM FORA (NA RAIZ DO ARQUIVO):
-
-// Detecta a tecla Enter nos campos de input
-document.addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        autenticar();
-    }
-});
-
-// Função de Logout
 function logout() {
     sessionStorage.clear();
-    window.location.href = "../index.html"; 
+    window.location.href = "../index.html";
 }
