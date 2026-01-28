@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <style>
         /* Reset e Base */
-        * { box-sizing: border-box; } /* Ajuste técnico para layout */
+        * { box-sizing: border-box; } 
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; }
         
         /* Barra Superior Fixa */
@@ -19,9 +19,7 @@
             justify-content: space-between;
             align-items: center;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             height: 60px;
             z-index: 1000;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
@@ -37,25 +35,32 @@
             outline: none;
         }
 
-        .btn-logout {
-            background-color: #d9534f;
+        .btn-header {
             color: white;
             border: none;
             padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 13px;
+            transition: 0.3s;
         }
 
-        /* Container do Álbum - "Desenterrando" a primeira linha */
+        .btn-logout { background-color: #d9534f; }
+        .btn-logout:hover { background-color: #c9302c; }
+        
+        /* Botão para forçar atualização dos dados */
+        .btn-refresh { background-color: #f0ad4e; margin-right: 5px; }
+        .btn-refresh:hover { background-color: #ec971f; }
+
+        /* Container do Álbum */
         .album-wrapper {
-            margin-top: 80px; /* Se 100px ficar muito longe, 80px costuma ser o ideal para barra de 60px */
+            margin-top: 80px; 
             padding: 20px;
             display: flex;
             justify-content: center;
         }
 
-        /* Grade de Fotos - LADO A LADO */
         .grid-efetivo {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -64,7 +69,7 @@
             max-width: 1400px;
         }
 
-        /* Estilo do Card Individual */
+        /* Card Militar */
         .militar-card {
             background: white;
             border-radius: 10px;
@@ -91,7 +96,7 @@
             margin-top: 2px;
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis; /* Se o nome for gigante, ele coloca "..." */
+            text-overflow: ellipsis;
         }
     </style>
 </head>
@@ -101,7 +106,8 @@
         <div id="usuario-logado">P1 - 1º BPM</div>
         <div class="search-container">
             <input type="text" id="busca" placeholder="🔍 Pesquisar por nome, graduação ou matrícula..." onkeyup="filtrar()">
-            <button class="btn-logout" onclick="logout()">Sair</button>
+            <button class="btn-header btn-refresh" onclick="atualizarDados()" title="Sincronizar com Planilha">🔄</button>
+            <button class="btn-header btn-logout" onclick="logout()">Sair</button>
         </div>
     </header>
 
@@ -110,7 +116,42 @@
             </div>
     </main>
 
+    <script src="../js/config.js"></script>
     <script src="../js/auth.js"></script>
     <script src="p1-script.js"></script>
+
+    <script>
+        // Função para atualizar os dados sem precisar deslogar
+        async function atualizarDados() {
+            const btn = document.querySelector('.btn-refresh');
+            const user = JSON.parse(sessionStorage.getItem('usuario'));
+            
+            if(!user) return;
+            
+            btn.innerText = "⏳";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(CONFIG.URL_GAS, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        matricula: user.matricula,
+                        senha: user.senha // Precisamos guardar a senha no login para isso
+                    })
+                });
+                
+                const res = await response.json();
+                if(res.success) {
+                    sessionStorage.setItem('lista_efetivo', JSON.stringify(res.data));
+                    location.reload(); // Recarrega para mostrar as fotos/dados novos
+                }
+            } catch (e) {
+                alert("Erro ao sincronizar dados.");
+            } finally {
+                btn.innerText = "🔄";
+                btn.disabled = false;
+            }
+        }
+    </script>
 </body>
 </html>
