@@ -1,12 +1,27 @@
-const user = JSON.parse(sessionStorage.getItem("militar_logado"));
-const listaEfetivo = JSON.parse(sessionStorage.getItem("lista_efetivo"));
+// Aguarda o HTML carregar completamente antes de rodar o script
+document.addEventListener("DOMContentLoaded", function() {
+    const user = JSON.parse(sessionStorage.getItem("militar_logado"));
+    const listaEfetivo = JSON.parse(sessionStorage.getItem("lista_efetivo"));
 
-if (!user) {
-    window.location.href = "../index.html";
-} else {
-    document.getElementById('usuario-logado').innerText = `P1 - Olá, ${user.nomeGuerra || 'ADMIN'}`;
-    renderizarCards(listaEfetivo);
-}
+    // Verifica se o usuário está logado
+    if (!user) {
+        window.location.href = "../index.html";
+        return;
+    }
+
+    // Tenta encontrar o elemento da barra superior
+    const labelUsuario = document.getElementById('usuario-logado');
+    if (labelUsuario) {
+        labelUsuario.innerText = `P1 - Olá, ${user.nomeGuerra || 'ADMIN'}`;
+    }
+
+    // Se houver dados, renderiza os cards
+    if (listaEfetivo) {
+        renderizarCards(listaEfetivo);
+    }
+});
+
+// A função renderizarCards e filtrar continuam abaixo...
 
 function renderizarCards(dados) {
     const container = document.getElementById('container-cards');
