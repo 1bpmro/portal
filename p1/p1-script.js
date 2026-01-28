@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
     }
 
-    // 3. Atualiza o nome na barra superior (usando o campo da aba CONTROLE_ACESSO)
+    // 3. Atualiza o nome na barra superior
     const labelUsuario = document.getElementById('usuario-logado');
     if (labelUsuario) {
         labelUsuario.innerText = `P1 - Olá, ${user.nomeGuerra || 'ADMIN'}`;
@@ -35,13 +35,11 @@ function renderizarCards(dados) {
         const card = document.createElement('div');
         card.className = 'militar-card';
         
-        // Usando a matrícula para abrir a ficha futuramente
+        // Clique para abrir a ficha
         card.onclick = () => abrirFicha(mil["MATRÍCULA"]);
 
-        // Busca a foto na coluna "FOTO" (coluna AN)
         const linkFoto = mil["FOTO"] || "https://cdn-icons-png.flaticon.com/512/1053/1053244.png";
 
-        // Monta o visual do card respeitando os nomes das colunas da sua planilha
         card.innerHTML = `
             <div class="foto-container">
                 <img src="${linkFoto}" alt="Foto de ${mil["NOME GUERRA"]}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1053/1053244.png'">
@@ -55,14 +53,13 @@ function renderizarCards(dados) {
     });
 }
 
-// Função de busca (filtra por nome, graduação ou matrícula)
+// Função de busca
 function filtrar() {
     if (!listaEfetivo) return;
 
     const termo = document.getElementById('busca').value.toLowerCase();
     
     const filtrados = listaEfetivo.filter(mil => {
-        // Mapeamos os campos exatos da sua planilha para a busca
         const n = (mil["NOME GUERRA"] || "").toString().toLowerCase();
         const g = (mil["GRADUAÇÃO"] || "").toString().toLowerCase();
         const m = (mil["MATRÍCULA"] || "").toString().toLowerCase();
@@ -73,18 +70,15 @@ function filtrar() {
     renderizarCards(filtrados);
 }
 
-// Função para abrir a ficha detalhada
+// Função para abrir a ficha detalhada - ATIVADA!
 function abrirFicha(matricula) {
     if(!matricula) {
-        alert("Matrícula não encontrada para este militar.");
+        alert("Matrícula não encontrada.");
         return;
     }
-    // Salva a matrícula para ser usada na página de detalhes
+    // Salva a matrícula para a próxima página saber quem carregar
     sessionStorage.setItem("matricula_selecionada", matricula);
     
-    // Alerta temporário antes de criarmos o arquivo ficha.html
-    alert("Abrindo ficha da matrícula: " + matricula);
-    
-    // Descomente a linha abaixo quando criarmos a página ficha.html
-    // window.location.href = "ficha.html";
+    // Redireciona para a página da ficha
+    window.location.href = "ficha.html";
 }
