@@ -10,7 +10,7 @@
         * { box-sizing: border-box; } 
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; }
         
-        /* Barra Superior Fixa */
+        /* BARRA SUPERIOR - CORRIGIDA PARA STICKY */
         .header-p1 {
             background-color: #1a5c37;
             color: white;
@@ -18,9 +18,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            height: 60px;
+            position: sticky; /* Sticky empurra o conteúdo para baixo naturalmente */
+            top: 0;
+            width: 100%;
+            height: 70px; /* Um pouco mais de altura para os logos */
             z-index: 1000;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
@@ -44,18 +45,20 @@
             font-weight: bold;
             font-size: 13px;
             transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-logout { background-color: #d9534f; }
         .btn-logout:hover { background-color: #c9302c; }
         
-        /* Botão para forçar atualização dos dados */
         .btn-refresh { background-color: #f0ad4e; margin-right: 5px; }
         .btn-refresh:hover { background-color: #ec971f; }
 
-        /* Container do Álbum */
+        /* WRAPPER - AJUSTADO */
         .album-wrapper {
-            margin-top: 80px; 
+            margin-top: 20px; /* Espaço pequeno já que o header agora ocupa lugar */
             padding: 20px;
             display: flex;
             justify-content: center;
@@ -69,7 +72,6 @@
             max-width: 1400px;
         }
 
-        /* Card Militar */
         .militar-card {
             background: white;
             border-radius: 10px;
@@ -103,10 +105,10 @@
 <body>
 
     <header class="header-p1">
-        <div id="usuario-logado">P1 - 1º BPM</div>
+        <div id="usuario-logado" style="font-weight: bold; font-size: 1.1rem;">P1 - 1º BPM</div>
         <div class="search-container">
-            <input type="text" id="busca" placeholder="🔍 Pesquisar por nome, graduação ou matrícula..." onkeyup="filtrar()">
-            <button class="btn-header btn-refresh" onclick="atualizarDados()" title="Sincronizar com Planilha">🔄</button>
+            <input type="text" id="busca" placeholder="🔍 Pesquisar..." onkeyup="filtrar()">
+            <button class="btn-header btn-refresh" onclick="atualizarDados()" title="Sincronizar">🔄</button>
             <button class="btn-header btn-logout" onclick="logout()">Sair</button>
         </div>
     </header>
@@ -121,12 +123,15 @@
     <script src="p1-script.js"></script>
 
     <script>
-        // Função para atualizar os dados sem precisar deslogar
         async function atualizarDados() {
             const btn = document.querySelector('.btn-refresh');
+            // IMPORTANTE: Use 'usuario' para bater com o auth.js
             const user = JSON.parse(sessionStorage.getItem('usuario'));
             
-            if(!user) return;
+            if(!user || !user.matricula) {
+                alert("Sessão expirada. Faça login novamente.");
+                return;
+            }
             
             btn.innerText = "⏳";
             btn.disabled = true;
@@ -136,17 +141,20 @@
                     method: 'POST',
                     body: JSON.stringify({
                         matricula: user.matricula,
-                        senha: user.senha // Precisamos guardar a senha no login para isso
+                        senha: user.senha // Certifique-se que o auth.js está salvando a senha
                     })
                 });
                 
                 const res = await response.json();
                 if(res.success) {
                     sessionStorage.setItem('lista_efetivo', JSON.stringify(res.data));
-                    location.reload(); // Recarrega para mostrar as fotos/dados novos
+                    location.reload(); 
+                } else {
+                    alert("Erro: " + res.message);
                 }
             } catch (e) {
-                alert("Erro ao sincronizar dados.");
+                alert("Erro ao sincronizar dados com a planilha.");
+                console.error(e);
             } finally {
                 btn.innerText = "🔄";
                 btn.disabled = false;
