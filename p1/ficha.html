@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha do Militar</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body { background-color: #f4f7f6; font-family: sans-serif; margin: 0; padding: 20px; }
+        .ficha-container { max-width: 900px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); overflow: hidden; }
+        .ficha-header { background: #1a5c37; color: white; padding: 20px; display: flex; align-items: center; gap: 20px; }
+        .foto-perfil { width: 150px; height: 180px; background: #ddd; border: 3px solid white; object-fit: cover; }
+        .dados-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; padding: 20px; }
+        .item-dado { border-bottom: 1px solid #eee; padding: 5px 0; }
+        .label { font-weight: bold; color: #1a5c37; font-size: 0.85rem; display: block; text-transform: uppercase; }
+        .valor { font-size: 1rem; color: #333; }
+        .btn-voltar { background: #333; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 20px; }
+    </style>
+</head>
+<body>
+
+    <button class="btn-voltar" onclick="history.back()">⬅ Voltar para o Álbum</button>
+
+    <div class="ficha-container" id="conteudo-ficha">
+        </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const matricula = sessionStorage.getItem("matricula_selecionada");
+            const efetivo = JSON.parse(sessionStorage.getItem("lista_efetivo"));
+            
+            // Busca o militar específico na lista
+            const mil = efetivo.find(m => m["MATRÍCULA"].toString() === matricula.toString());
+
+            if (!mil) {
+                document.getElementById('conteudo-ficha').innerHTML = "<h1>Militar não encontrado.</h1>";
+                return;
+            }
+
+            const html = `
+                <div class="ficha-header">
+                    <img src="${mil["FOTO"] || ''}" class="foto-perfil" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1053/1053244.png'">
+                    <div>
+                        <h1 style="margin:0">${mil["GRADUAÇÃO"]} ${mil["NOME GUERRA"]}</h1>
+                        <p style="margin:5px 0">Matrícula: ${mil["MATRÍCULA"]}</p>
+                    </div>
+                </div>
+                
+                <div class="dados-grid">
+                    <div class="item-dado"><span class="label">Nome Completo</span><span class="valor">${mil["NOME COMPLETO"] || "-"}</span></div>
+                    <div class="item-dado"><span class="label">CPF</span><span class="valor">${mil["CPF"] || "-"}</span></div>
+                    <div class="item-dado"><span class="label">RG</span><span class="valor">${mil["RG"] || "-"}</span></div>
+                    <div class="item-dado"><span class="label">Data de Nascimento</span><span class="valor">${mil["NASCIMENTO"] || "-"}</span></div>
+                    <div class="item-dado"><span class="label">Tipo Sanguíneo</span><span class="valor">${mil["T. SANGUE"] || "-"}</span></div>
+                    <div class="item-dado"><span class="label">Naturalidade</span><span class="valor">${mil["NATURALIDADE"] || "-"}</span></div>
+                    <div class="item-dado"><span class="label">Endereço</span><span class="valor">${mil["ENDEREÇO"] || "-"}</span></div>
+                    <div class="item-dado"><span class="label">Telefone</span><span class="valor">${mil["TELEFONE"] || "-"}</span></div>
+                    <div class="item-dado"><span class="label">E-mail</span><span class="valor">${mil["EMAIL"] || "-"}</span></div>
+                    <div class="item-dado"><span class="label">Local / Função</span><span class="valor">${mil["LOCAL"]} / ${mil["FUNÇÃO"]}</span></div>
+                    <div class="item-dado"><span class="label">Situação</span><span class="valor">${mil["SITUAÇÃO"]}</span></div>
+                </div>
+            `;
+
+            document.getElementById('conteudo-ficha').innerHTML = html;
+        });
+    </script>
+</body>
+</html>
