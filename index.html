@@ -9,17 +9,20 @@
 <body>
 
     <div class="login-container">
-        <div class="login-box">
-            <img src="assets/brasao.png" alt="1º BPM" class="logo">
-            <h2>Portal do Batalhão</h2>
-            <p>Identifique-se para acessar as seções</p>
-            
-            <input type="number" id="matricula" placeholder="Matrícula">
-            <input type="password" id="senha" placeholder="Senha">
-            
-            <button onclick="autenticar()">Acessar Sistema</button>
-            <div id="mensagem-erro" class="erro"></div>
-        </div>
+       <div class="login-box">
+    <div style="display: flex; justify-content: space-around; align-items: center; margin-bottom: 15px;">
+        <img src="https://rondonia.ro.gov.br/wp-content/uploads/2024/09/Brasao-PMRO-370x523.png" alt="PMRO" style="height: 80px;">
+        <img src="https://museu.pm.ro.gov.br/wp-content/uploads/2024/05/1-bpm-3.png" alt="1º BPM" style="height: 80px;">
+    </div>
+    <h2>Portal 1º BPM</h2>
+    <p>Sistema Integrado de Gestão</p>
+    
+    <input type="number" id="matricula" placeholder="Matrícula">
+    <input type="password" id="senha" placeholder="Senha">
+    
+    <button onclick="autenticar()">Acessar Sistema</button>
+    <div id="mensagem-erro" class="erro"></div>
+</div>
     </div>
 
     <script src="js/auth.js"></script>
