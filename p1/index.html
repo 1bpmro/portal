@@ -7,34 +7,46 @@
     <link rel="stylesheet" href="../css/style.css">
     <style>
         * { box-sizing: border-box; } 
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; overflow-x: hidden; }
         
         .header-p1 {
             background-color: #1a5c37;
             color: white;
             padding: 0 20px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed; /* GARANTE QUE FICA NO TOPO */
+            justify-content: center; /* Centraliza o conteúdo da barra */
+            position: fixed;
             top: 0; left: 0; right: 0;
-            height: 75px; 
+            height: 70px; 
             z-index: 2000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
 
-        .search-container { display: flex; gap: 10px; align-items: center; }
-        input#busca { padding: 10px 15px; border-radius: 20px; border: none; width: 350px; outline: none; font-size: 14px; }
+        .header-content {
+            width: 100%;
+            max-width: 1200px; /* Limita a largura da barra superior */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        .btn-header { color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .search-container { display: flex; gap: 10px; align-items: center; flex: 1; justify-content: flex-end; }
+        
+        input#busca { 
+            padding: 10px 15px; 
+            border-radius: 20px; 
+            border: none; 
+            width: 100%; 
+            max-width: 300px; /* Impede a barra de pesquisa de ser gigante */
+            outline: none; 
+        }
+
+        .btn-header { color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 18px; transition: 0.3s; }
         .btn-logout { background-color: #d9534f; }
         .btn-refresh { background-color: #f0ad4e; }
 
-        /* O PADDING-TOP É O QUE DESENTERRA OS NOMES */
         .album-wrapper {
             padding-top: 100px; 
-            padding-left: 20px;
-            padding-right: 20px;
             padding-bottom: 40px;
             display: flex;
             justify-content: center;
@@ -44,20 +56,11 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 20px;
-            width: 100%;
-            max-width: 1400px;
+            width: 95%;
+            max-width: 1200px; /* Mantém o álbum centralizado e elegante */
         }
-
-        .militar-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: 0.2s;
-            cursor: pointer;
-            text-align: center;
-            border-bottom: 4px solid #1a5c37;
-        }
+        /* ... (militar-card e demais estilos mantidos do seu original) ... */
+        .militar-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s; cursor: pointer; text-align: center; border-bottom: 4px solid #1a5c37; }
         .militar-card:hover { transform: translateY(-5px); }
         .foto-container { width: 100%; height: 220px; background-color: #e9ecef; }
         .foto-container img { width: 100%; height: 100%; object-fit: cover; }
@@ -68,11 +71,13 @@
 </head>
 <body>
     <header class="header-p1">
-        <div id="usuario-logado" style="font-weight: bold;">P1 - 1º BPM</div>
-        <div class="search-container">
-            <input type="text" id="busca" placeholder="🔍 Pesquisar militar..." onkeyup="filtrar()">
-            <button class="btn-header btn-refresh" onclick="atualizarDados()">🔄</button>
-            <button class="btn-header btn-logout" onclick="logout()">Sair</button>
+        <div class="header-content">
+            <div id="usuario-logado" style="font-weight: bold; white-space: nowrap;">P1 - 1º BPM</div>
+            <div class="search-container">
+                <input type="text" id="busca" placeholder="🔍 Pesquisar..." onkeyup="filtrar()">
+                <button class="btn-header btn-refresh" onclick="atualizarDados()" title="Sincronizar">🔄</button>
+                <button class="btn-header btn-logout" onclick="logout()" title="Sair">🚪</button>
+            </div>
         </div>
     </header>
 
