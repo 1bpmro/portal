@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzIUrJ0t8UqLrhzzEjZS6nf8FrryMJFCJA8a6F74LN9bSvyI-7SbpuyG-BgjGp9Hn-n0w/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxFvRSgfCIiasjAe8YRV1lhabbga6AoUPgE70e2V-ImuQMR4wYUtB1dqE_EAM6xMkr0HA/exec";
 
 async function autenticar() {
     const mat = document.getElementById('matricula').value;
