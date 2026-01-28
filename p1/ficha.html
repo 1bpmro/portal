@@ -3,44 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ficha do Militar</title>
+    <title>Ficha do Militar - P1</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        body { background-color: #f4f7f6; font-family: sans-serif; margin: 0; padding: 20px; }
-        .ficha-container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); overflow: hidden; }
-        .ficha-header { background: #1a5c37; color: white; padding: 20px; display: flex; align-items: center; gap: 20px; }
-        .foto-perfil { width: 140px; height: 180px; background: #ddd; border: 3px solid white; object-fit: cover; border-radius: 5px; }
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
         
+        /* Barra de Ferramentas Fixa */
+        .toolbar { 
+            position: sticky; top: 0; background: white; padding: 15px 20px; 
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000;
+        }
+
+        .ficha-container { max-width: 1000px; margin: 20px auto; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); overflow: hidden; padding-bottom: 30px; }
+        
+        /* Header */
+        .ficha-header { background: #1a5c37; color: white; padding: 25px; display: flex; align-items: center; gap: 25px; }
+        .foto-container { position: relative; }
+        .foto-perfil { width: 140px; height: 180px; background: #ddd; border: 3px solid white; object-fit: cover; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .foto-perfil.editavel:hover { opacity: 0.8; filter: brightness(0.7); }
+        .foto-perfil.editavel:hover::after { content: "Trocar Foto"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; }
+
         .secao-titulo { background: #eee; padding: 10px 20px; font-weight: bold; color: #1a5c37; border-left: 5px solid #1a5c37; margin-top: 10px; }
         
         .dados-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; padding: 20px; }
-        .item-dado { border-bottom: 1px solid #f0f0f0; padding: 5px 0; }
-        .label { font-weight: bold; color: #555; font-size: 0.75rem; display: block; text-transform: uppercase; }
-        .valor { font-size: 0.95rem; color: #000; font-weight: 500; }
         
-        .controles { max-width: 1000px; margin: 0 auto 15px; display: flex; justify-content: space-between; }
-        .btn { border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; text-decoration: none; display: inline-block; }
-        .btn-voltar { background: #333; color: white; }
+        /* Inputs Dinâmicos */
+        .item-dado { border-bottom: 1px solid #f0f0f0; padding: 5px 0; display: flex; flex-direction: column; }
+        .label { font-weight: bold; color: #555; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 2px; }
+        
+        .valor-input { 
+            border: 1px solid transparent; background: transparent; 
+            font-size: 0.95rem; color: #000; font-weight: 500; 
+            padding: 5px; width: 100%; outline: none; transition: 0.2s;
+        }
+        .modo-edicao .valor-input { border: 1px solid #ccc; background: #fffdf2; border-radius: 4px; }
+
+        /* Botões */
+        .btn { border: none; padding: 10px 18px; border-radius: 5px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .btn-voltar { background: #333; color: white; text-decoration: none; }
+        .btn-alterar { background: #f0ad4e; color: white; }
+        .btn-salvar { background: #28a745; color: white; display: none; }
         .btn-imprimir { background: #1a5c37; color: white; }
 
-        @media print {
-            .controles { display: none; }
-            body { padding: 0; background: white; }
-            .ficha-container { box-shadow: none; border: 1px solid #ccc; width: 100%; }
-        }
+        /* Histórico */
+        .historico-container { padding: 20px; background: #f9f9f9; margin: 0 20px; border-radius: 5px; border: 1px dashed #ccc; }
+        .hist-item { font-size: 0.85rem; color: #666; margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px solid #eee; }
+
+        @media print { .toolbar { display: none; } .ficha-container { box-shadow: none; border: 1px solid #ccc; } }
     </style>
 </head>
 <body>
 
-    <div class="controles">
-        <a href="index.html" class="btn btn-voltar">⬅ Voltar ao Álbum</a>
-        <button class="btn btn-imprimir" onclick="window.print()">🖨 Imprimir Ficha</button>
+    <div class="toolbar">
+        <div style="display: flex; gap: 10px;">
+            <a href="index.html" class="btn btn-voltar">⬅ Voltar</a>
+            <button class="btn btn-imprimir" onclick="window.print()">🖨 Imprimir</button>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button id="btnAlterar" class="btn btn-alterar" onclick="ativarEdicao()">✏️ EDITAR/ALTERAR</button>
+            <button id="btnSalvar" class="btn btn-salvar" onclick="salvarFicha()">💾 SALVAR ALTERAÇÕES</button>
+        </div>
     </div>
 
     <div class="ficha-container" id="conteudo-ficha">
         </div>
 
+    <div class="historico-container" id="container-historico" style="max-width: 1000px; margin: 10px auto;">
+        <div class="label" style="margin-bottom: 10px;">Histórico de Alterações</div>
+        <div id="lista-historico">
+            <div class="hist-item">📅 Ficha carregada do banco de dados principal.</div>
+        </div>
+    </div>
+
     <script>
+        let militarOriginal = null;
+
         document.addEventListener("DOMContentLoaded", function() {
             const matricula = sessionStorage.getItem("matricula_selecionada");
             const efetivo = JSON.parse(sessionStorage.getItem("lista_efetivo"));
@@ -50,59 +88,114 @@
                 return;
             }
 
-            const mil = efetivo.find(m => m["MATRÍCULA"] && m["MATRÍCULA"].toString() === matricula.toString());
+            militarOriginal = efetivo.find(m => m["MATRÍCULA"] && m["MATRÍCULA"].toString() === matricula.toString());
 
-            if (!mil) {
+            if (!militarOriginal) {
                 document.getElementById('conteudo-ficha').innerHTML = "<h1 style='padding:20px'>Militar não encontrado.</h1>";
                 return;
             }
 
-            document.getElementById('conteudo-ficha').innerHTML = `
+            renderizarDados(militarOriginal);
+        });
+
+        function renderizarDados(mil) {
+            const container = document.getElementById('conteudo-ficha');
+            container.innerHTML = `
                 <div class="ficha-header">
-                    <img src="${mil["FOTO"] || ''}" class="foto-perfil" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1053/1053244.png'">
+                    <div class="foto-container">
+                        <img id="imgPerfil" src="${mil["FOTO"] || ''}" class="foto-perfil" onclick="alterarFoto()" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1053/1053244.png'">
+                    </div>
                     <div>
                         <h1 style="margin:0">${mil["GRADUAÇÃO"]} ${mil["NOME GUERRA"]}</h1>
                         <p style="margin:5px 0; font-size: 1.2rem;">Matrícula: ${mil["MATRÍCULA"]}</p>
-                        <span style="background:rgba(255,255,255,0.2); padding:3px 10px; border-radius:15px; font-size:0.8rem;">
-                            Antiguidade: ${mil["ANTIGUID."] || "-"}
-                        </span>
                     </div>
                 </div>
 
                 <div class="secao-titulo">DADOS PESSOAIS</div>
                 <div class="dados-grid">
-                    <div class="item-dado"><span class="label">Nome Completo</span><span class="valor">${mil["NOME COMPLETO"]}</span></div>
-                    <div class="item-dado"><span class="label">CPF</span><span class="valor">${mil["CPF"]}</span></div>
-                    <div class="item-dado"><span class="label">RG</span><span class="valor">${mil["RG"]}</span></div>
-                    <div class="item-dado"><span class="label">Nascimento</span><span class="valor">${mil["NASCIMENTO"]}</span></div>
-                    <div class="item-dado"><span class="label">Naturalidade</span><span class="valor">${mil["NATURALIDADE"]}</span></div>
-                    <div class="item-dado"><span class="label">Tipo Sanguíneo</span><span class="valor">${mil["T. SANGUE"]}</span></div>
-                    <div class="item-dado"><span class="label">Sexo</span><span class="valor">${mil["SEXO"]}</span></div>
+                    ${campo("Nome Completo", mil["NOME COMPLETO"])}
+                    ${campo("CPF", mil["CPF"])}
+                    ${campo("RG", mil["RG"])}
+                    ${campo("Nascimento", mil["NASCIMENTO"])}
+                    ${campo("Naturalidade", mil["NATURALIDADE"])}
+                    ${campo("T. Sangue", mil["T. SANGUE"])}
+                    ${campo("Sexo", mil["SEXO"])}
                 </div>
 
                 <div class="secao-titulo">CONTATO E ENDEREÇO</div>
                 <div class="dados-grid">
-                    <div class="item-dado"><span class="label">Endereço</span><span class="valor">${mil["ENDEREÇO"]}</span></div>
-                    <div class="item-dado"><span class="label">Telefones</span><span class="valor">${mil["TELEFONE"]} / ${mil["TELEFONE 2"]}</span></div>
-                    <div class="item-dado"><span class="label">E-mail</span><span class="valor">${mil["EMAIL"]}</span></div>
+                    ${campo("Endereço", mil["ENDEREÇO"])}
+                    ${campo("Telefone 1", mil["TELEFONE"])}
+                    ${campo("Telefone 2", mil["TELEFONE 2"])}
+                    ${campo("E-mail", mil["EMAIL"])}
                 </div>
 
                 <div class="secao-titulo">DADOS PROFISSIONAIS</div>
                 <div class="dados-grid">
-                    <div class="item-dado"><span class="label">Local / Função</span><span class="valor">${mil["LOCAL"]} / ${mil["FUNÇÃO"]}</span></div>
-                    <div class="item-dado"><span class="label">Situação</span><span class="valor">${mil["SITUAÇÃO"]}</span></div>
-                    <div class="item-dado"><span class="label">CNH</span><span class="valor">${mil["CNH CAT"]}</span></div>
-                    <div class="item-dado"><span class="label">Escolaridade</span><span class="valor">${mil["ESCOLARIDADE/SIGA"]}</span></div>
-                    <div class="item-dado"><span class="label">Inclusão BPM</span><span class="valor">${mil["INCLUSÃO BPM"]}</span></div>
+                    ${campo("Função", mil["FUNÇÃO"])}
+                    ${campo("Local", mil["LOCAL"])}
+                    ${campo("Situação", mil["SITUAÇÃO"])}
+                    ${campo("CNH", mil["CNH CAT"])}
+                    ${campo("Escolaridade", mil["ESCOLARIDADE/SIGA"])}
+                    ${campo("Inclusão BPM", mil["INCLUSÃO BPM"])}
                 </div>
 
                 <div class="secao-titulo">MEDALHAS E OBSERVAÇÕES</div>
                 <div class="dados-grid" style="grid-template-columns: 1fr;">
-                    <div class="item-dado"><span class="label">Medalhas</span><span class="valor">${mil["MEDALHAS"] || "Nenhuma registrada"}</span></div>
-                    <div class="item-dado"><span class="label">Observações</span><span class="valor">${mil["OBSERVAÇÃO"] || "-"}</span></div>
+                    ${campo("Medalhas", mil["MEDALHAS"])}
+                    ${campo("Observações", mil["OBSERVAÇÃO"])}
                 </div>
             `;
-        });
+        }
+
+        function campo(label, valor) {
+            return `
+                <div class="item-dado">
+                    <span class="label">${label}</span>
+                    <input type="text" class="valor-input" value="${valor || ''}" readonly data-label="${label}">
+                </div>
+            `;
+        }
+
+        function ativarEdicao() {
+            document.getElementById('conteudo-ficha').classList.add('modo-edicao');
+            document.getElementById('imgPerfil').classList.add('editavel');
+            
+            const inputs = document.querySelectorAll('.valor-input');
+            inputs.forEach(input => input.readOnly = false);
+
+            document.getElementById('btnAlterar').style.display = 'none';
+            document.getElementById('btnSalvar').style.display = 'flex';
+            
+            alert("Modo de edição ativado para o administrativo.");
+        }
+
+        function alterarFoto() {
+            if (!document.getElementById('conteudo-ficha').classList.contains('modo-edicao')) return;
+            
+            const novoLink = prompt("Cole a URL da nova foto do militar:", document.getElementById('imgPerfil').src);
+            if (novoLink) {
+                document.getElementById('imgPerfil').src = novoLink;
+            }
+        }
+
+        function salvarFicha() {
+            const agora = new Date().toLocaleString();
+            const log = document.createElement('div');
+            log.className = 'hist-item';
+            log.innerText = `📅 ${agora}: Alteração nos dados profissionais/pessoais por Administrativo P1.`;
+            document.getElementById('lista-historico').prepend(log);
+
+            // Aqui você conectará com o Google Apps Script futuramente
+            alert("Salvando alterações na planilha... (Lógica de backend necessária)");
+            
+            // Volta para modo leitura
+            document.getElementById('conteudo-ficha').classList.remove('modo-edicao');
+            document.getElementById('imgPerfil').classList.remove('editavel');
+            document.querySelectorAll('.valor-input').forEach(i => i.readOnly = true);
+            document.getElementById('btnSalvar').style.display = 'none';
+            document.getElementById('btnAlterar').style.display = 'flex';
+        }
     </script>
 </body>
 </html>
