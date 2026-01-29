@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // --- RENDERIZAÇÃO COM LÓGICA DE ORDENAÇÃO ---
 function renderizarCards(dados) {
-    dadosAtuaisExibidos = dados; // Guarda o que está na tela (filtrado ou não)
+    dadosAtuaisExibidos = dados; 
     const container = document.getElementById('container-cards');
     if (!container) return;
     container.innerHTML = "";
@@ -29,14 +29,16 @@ function renderizarCards(dados) {
     // LÓGICA DE ORDENAÇÃO
     const dadosOrdenados = [...dados].sort((a, b) => {
         if (criterio === "antiguidade") {
-            // Tenta ler a coluna ANTIGUIDADE (numérica)
-            let antA = parseFloat(a["ANTIGUIDADE"] || a["ANTIGUID."] || 9999);
-            let antB = parseFloat(b["ANTIGUIDADE"] || b["ANTIGUID."] || 9999);
+            // Pega o valor da 1ª coluna (índice 0) ou da chave "ANTIGUIDADE"
+            const chaves = Object.keys(a);
+            let antA = parseFloat(a["ANTIGUIDADE"] || a[chaves[0]] || 9999);
+            let antB = parseFloat(b["ANTIGUIDADE"] || b[chaves[0]] || 9999);
             return antA - antB;
         } else {
-            // Ordem Alfabética por Nome Completo
-            let nomeA = (a["NOME COMPLETO"] || "").toString().toUpperCase();
-            let nomeB = (b["NOME COMPLETO"] || "").toString().toUpperCase();
+            // Pega o valor da 3ª coluna (índice 2) ou da chave "NOME COMPLETO"
+            const chaves = Object.keys(a);
+            let nomeA = (a["NOME COMPLETO"] || a[chaves[2]] || "").toString().toUpperCase();
+            let nomeB = (b["NOME COMPLETO"] || b[chaves[2]] || "").toString().toUpperCase();
             return nomeA.localeCompare(nomeB);
         }
     });
@@ -44,17 +46,15 @@ function renderizarCards(dados) {
     dadosOrdenados.forEach(mil => {
         const card = document.createElement('div');
         card.className = 'militar-card';
-        const matricula = mil["MATRÍCULA"];
+        const matricula = mil["MATRÍCULA"] || mil[Object.keys(mil)[1]]; // Tenta matrícula pelo nome ou 2ª coluna
         card.onclick = () => abrirFicha(matricula);
 
         const linkFoto = mil["FOTO"] && mil["FOTO"].startsWith("http") 
-            ? mil["FOTO"] 
-            : "https://cdn-icons-png.flaticon.com/512/1053/1053244.png";
+            ? mil["FOTO"] : "https://cdn-icons-png.flaticon.com/512/1053/1053244.png";
 
         card.innerHTML = `
             <div class="foto-container">
-                <img src="${linkFoto}" alt="Militar" loading="lazy" 
-                     onerror="this.src='https://cdn-icons-png.flaticon.com/512/1053/1053244.png'">
+                <img src="${linkFoto}" alt="Militar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1053/1053244.png'">
             </div>
             <div class="militar-info">
                 <span class="graduacao">${mil["GRADUAÇÃO"] || ""}</span>
