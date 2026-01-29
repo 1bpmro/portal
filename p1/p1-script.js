@@ -15,23 +15,12 @@ document.addEventListener("DOMContentLoaded", function() {
     renderizarCards(listaEfetivo);
 });
 
-// --- FORMATAÇÃO DE DATAS ---
-function formatarInfo(valor) {
-    if (!valor || valor === "") return "";
-    if (valor.toString().includes("T") && !isNaN(Date.parse(valor))) {
-        const d = new Date(valor);
-        return d.toLocaleDateString('pt-BR');
-    }
-    return valor;
-}
-
-// --- RENDERIZAÇÃO (ORDEM ALFABÉTICA PELA COLUNA C) ---
+// --- RENDERIZAÇÃO ---
 function renderizarCards(dados) {
     const container = document.getElementById('container-cards');
     if (!container) return;
     container.innerHTML = "";
 
-    // Ordenação A-Z por Nome Completo
     const dadosOrdenados = [...dados].sort((a, b) => {
         let nomeA = (a["NOME COMPLETO"] || "").toString().toUpperCase();
         let nomeB = (b["NOME COMPLETO"] || "").toString().toUpperCase();
@@ -62,34 +51,38 @@ function renderizarCards(dados) {
     });
 }
 
-// --- PESQUISA ---
-function filtrar() {
-    if (!listaEfetivo) return;
-    const termo = document.getElementById('busca').value.toLowerCase().trim();
-    
-    const filtrados = listaEfetivo.filter(mil => {
-        return (mil["NOME GUERRA"] || "").toString().toLowerCase().includes(termo) || 
-               (mil["GRADUAÇÃO"] || "").toString().toLowerCase().includes(termo) || 
-               (mil["MATRÍCULA"] || "").toString().toLowerCase().includes(termo) || 
-               (mil["NOME COMPLETO"] || "").toString().toLowerCase().includes(termo);
-    });
-    
-    renderizarCards(filtrados);
+// --- CONTROLE DO MODAL ---
+function abrirModalNovo() {
+    document.getElementById('modalNovoMilitar').style.display = 'flex';
 }
 
-// --- CADASTRO DE NOVO MILITAR ---
-async function abrirModalNovo() {
-    const nome = prompt("Nome Completo:");
-    if (!nome) return;
-    const graduacao = prompt("Graduação (Ex: SD, CB, SGT):");
-    const matricula = prompt("Matrícula:");
+function fecharModal() {
+    document.getElementById('modalNovoMilitar').style.display = 'none';
+    // Limpa os campos ao fechar
+    document.getElementById('novo-nome').value = "";
+    document.getElementById('novo-mat').value = "";
+}
 
-    if (!matricula) return alert("A matrícula é obrigatória!");
+// --- SALVAR NOVO MILITAR (CONECTADO AO MODAL) ---
+async function salvarNovoMilitar() {
+    const nome = document.getElementById('novo-nome').value.trim();
+    const grad = document.getElementById('novo-grad').value;
+    const mat = document.getElementById('novo-mat').value.trim();
+    const btn = document.getElementById('btnSalvarNovo');
+
+    if (!nome || !mat) {
+        alert("Por favor, preencha o Nome e a Matrícula.");
+        return;
+    }
+
+    // Feedback visual de carregamento
+    btn.disabled = true;
+    btn.innerText = "Enviando...";
 
     const dadosMilitar = {
         "NOME COMPLETO": nome,
-        "GRADUAÇÃO": graduacao,
-        "MATRÍCULA": matricula,
+        "GRADUAÇÃO": grad,
+        "MATRÍCULA": mat,
         "NOME GUERRA": nome.split(" ")[0].toUpperCase(),
         "SITUAÇÃO": "ATIVO",
         "FOTO": "" 
@@ -100,26 +93,48 @@ async function abrirModalNovo() {
             method: 'POST',
             body: JSON.stringify({ action: "createMilitar", dados: dadosMilitar })
         });
+        
         const res = await response.json();
+        
         if (res.success) {
-            alert("Sucesso! Clique em OK e depois no botão 🔄 para atualizar a lista.");
+            alert("Militar cadastrado com sucesso!");
+            fecharModal();
+            // Dica: Chame sua função de atualizar dados aqui se quiser que apareça na hora
+            if (typeof atualizarDados === "function") atualizarDados();
         } else {
-            alert("Erro: " + res.message);
+            alert("Erro ao salvar: " + res.message);
         }
     } catch (e) {
-        alert("Erro ao conectar com o servidor.");
+        console.error(e);
+        alert("Erro de conexão com o servidor.");
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Salvar Cadastro";
     }
+}
+
+// --- PESQUISA ---
+function filtrar() {
+    if (!listaEfetivo) return;
+    const termo = document.getElementById('busca').value.toLowerCase().trim();
+    const filtrados = listaEfetivo.filter(mil => {
+        return (mil["NOME GUERRA"] || "").toString().toLowerCase().includes(termo) || 
+               (mil["GRADUAÇÃO"] || "").toString().toLowerCase().includes(termo) || 
+               (mil["MATRÍCULA"] || "").toString().toLowerCase().includes(termo) || 
+               (mil["NOME COMPLETO"] || "").toString().toLowerCase().includes(termo);
+    });
+    renderizarCards(filtrados);
 }
 
 // --- NAVEGAÇÃO ---
 function abrirFicha(matricula) {
-    if(!matricula) return alert("Matrícula inválida.");
+    if(!matricula) return alert("Matrícula não encontrada.");
     sessionStorage.setItem("matricula_selecionada", matricula);
     window.location.href = "ficha.html";
 }
 
 function logout() {
-    if(confirm("Deseja sair?")) {
+    if(confirm("Deseja encerrar a sessão?")) {
         sessionStorage.clear();
         window.location.href = "../index.html";
     }
