@@ -1,6 +1,6 @@
 const user = JSON.parse(sessionStorage.getItem("usuario"));
-const listaEfetivo = JSON.parse(sessionStorage.getItem("lista_efetivo"));
-let dadosAtuaisExibidos = []; // Variável para controlar a ordenação em cima dos filtros
+let listaEfetivo = JSON.parse(sessionStorage.getItem("lista_efetivo"));
+let dadosAtuaisExibidos = []; 
 
 document.addEventListener("DOMContentLoaded", function() {
     if (!user || !listaEfetivo) {
@@ -26,19 +26,17 @@ function renderizarCards(dados) {
 
     const criterio = document.getElementById('ordenacao').value;
 
-    // LÓGICA DE ORDENAÇÃO
     const dadosOrdenados = [...dados].sort((a, b) => {
+        const chaves = Object.keys(a);
         if (criterio === "antiguidade") {
-            // Pega o valor da 1ª coluna (índice 0) ou da chave "ANTIGUIDADE"
-            const chaves = Object.keys(a);
+            // Coluna A (Índice 0)
             let antA = parseFloat(a["ANTIGUIDADE"] || a[chaves[0]] || 9999);
             let antB = parseFloat(b["ANTIGUIDADE"] || b[chaves[0]] || 9999);
             return antA - antB;
         } else {
-            // Pega o valor da 3ª coluna (índice 2) ou da chave "NOME COMPLETO"
-            const chaves = Object.keys(a);
-            let nomeA = (a["NOME GUERRA"] || a[chaves[2]] || "").toString().toUpperCase();
-            let nomeB = (b["NOME GUERRA"] || b[chaves[2]] || "").toString().toUpperCase();
+            // Coluna C (Índice 2 - Nome Completo)
+            let nomeA = (a["NOME COMPLETO"] || a[chaves[2]] || "").toString().toUpperCase();
+            let nomeB = (b["NOME COMPLETO"] || b[chaves[2]] || "").toString().toUpperCase();
             return nomeA.localeCompare(nomeB);
         }
     });
@@ -46,7 +44,7 @@ function renderizarCards(dados) {
     dadosOrdenados.forEach(mil => {
         const card = document.createElement('div');
         card.className = 'militar-card';
-        const matricula = mil["MATRÍCULA"] || mil[Object.keys(mil)[1]]; // Tenta matrícula pelo nome ou 2ª coluna
+        const matricula = mil["MATRÍCULA"] || mil[Object.keys(mil)[1]]; 
         card.onclick = () => abrirFicha(matricula);
 
         const linkFoto = mil["FOTO"] && mil["FOTO"].startsWith("http") 
@@ -65,59 +63,68 @@ function renderizarCards(dados) {
     });
 }
 
-// --- PESQUISA E FILTRO DE SEÇÃO COMBINADOS ---
+// --- PESQUISA E FILTRO DE LOCAL ---
 function filtrar() {
     if (!listaEfetivo) return;
 
     const termo = document.getElementById('busca').value.toLowerCase().trim();
-    const secaoSelecionada = document.getElementById('filtro-secao').value;
+    const localSelecionado = document.getElementById('filtro-local').value;
 
     const filtrados = listaEfetivo.filter(mil => {
-        // Verifica Seção (se o campo da seção estiver vazio no select, ignora o filtro)
-        const matchSecao = secaoSelecionada === "" || (mil["SEÇÃO"] || "").toString().toUpperCase() === secaoSelecionada;
+        // Filtro por LOCAL (Coluna da Planilha)
+        const matchLocal = localSelecionado === "" || (mil["LOCAL"] || "").toString().toUpperCase() === localSelecionado;
 
-        // Verifica Texto (Nome, Matrícula, Graduação)
+        // Pesquisa por Nome, Guerra ou Matrícula
         const matchTexto = (mil["NOME GUERRA"] || "").toString().toLowerCase().includes(termo) || 
                            (mil["NOME COMPLETO"] || "").toString().toLowerCase().includes(termo) ||
-                           (mil["MATRÍCULA"] || "").toString().toLowerCase().includes(termo) ||
-                           (mil["GRADUAÇÃO"] || "").toString().toLowerCase().includes(termo);
+                           (mil["MATRÍCULA"] || "").toString().toLowerCase().includes(termo);
 
-        return matchSecao && matchTexto;
+        return matchLocal && matchTexto;
     });
 
     renderizarCards(filtrados);
 }
 
-// Disparado quando muda apenas o select de ordenação
 function ordenarEfetivo() {
     renderizarCards(dadosAtuaisExibidos);
 }
 
-// --- CONTROLE DO MODAL ---
-function abrirModalNovo() {
-    document.getElementById('modalNovoMilitar').style.display = 'flex';
+// --- ATUALIZAR / SINCRONIZAR DADOS ---
+async function atualizarDados() {
+    const btn = document.querySelector('.btn-refresh');
+    btn.innerText = "⌛";
+    
+    try {
+        const response = await fetch(CONFIG.URL_GAS + "?action=getEfetivo");
+        const novosDados = await response.json();
+        
+        if (novosDados) {
+            sessionStorage.setItem("lista_efetivo", JSON.stringify(novosDados));
+            listaEfetivo = novosDados;
+            renderizarCards(novosDados);
+            alert("Lista atualizada com sucesso!");
+        }
+    } catch (e) {
+        alert("Erro ao conectar com a planilha.");
+    } finally {
+        btn.innerText = "🔄";
+    }
 }
 
-function fecharModal() {
-    document.getElementById('modalNovoMilitar').style.display = 'none';
-    document.getElementById('novo-nome').value = "";
-    document.getElementById('novo-mat').value = "";
-}
+// --- MODAL E CADASTRO ---
+function abrirModalNovo() { document.getElementById('modalNovoMilitar').style.display = 'flex'; }
+function fecharModal() { document.getElementById('modalNovoMilitar').style.display = 'none'; }
 
-// --- SALVAR NOVO MILITAR ---
 async function salvarNovoMilitar() {
     const nome = document.getElementById('novo-nome').value.trim();
     const grad = document.getElementById('novo-grad').value;
     const mat = document.getElementById('novo-mat').value.trim();
     const btn = document.getElementById('btnSalvarNovo');
 
-    if (!nome || !mat) {
-        alert("Por favor, preencha o Nome e a Matrícula.");
-        return;
-    }
+    if (!nome || !mat) return alert("Preencha Nome e Matrícula.");
 
     btn.disabled = true;
-    btn.innerText = "Enviando...";
+    btn.innerText = "Salvando...";
 
     const dadosMilitar = {
         "NOME COMPLETO": nome,
@@ -125,7 +132,7 @@ async function salvarNovoMilitar() {
         "MATRÍCULA": mat,
         "NOME GUERRA": nome.split(" ")[0].toUpperCase(),
         "SITUAÇÃO": "ATIVO",
-        "FOTO": "" 
+        "LOCAL": "P1" // Local padrão ao cadastrar
     };
 
     try {
@@ -134,30 +141,25 @@ async function salvarNovoMilitar() {
             body: JSON.stringify({ action: "createMilitar", dados: dadosMilitar })
         });
         const res = await response.json();
-        
         if (res.success) {
-            alert("Militar cadastrado com sucesso! Clique no botão 🔄 para atualizar sua lista local.");
+            alert("Cadastrado! Atualize a lista no botão 🔄.");
             fecharModal();
-        } else {
-            alert("Erro: " + res.message);
         }
     } catch (e) {
-        alert("Erro de conexão com o servidor.");
+        alert("Erro ao salvar.");
     } finally {
         btn.disabled = false;
         btn.innerText = "Salvar Cadastro";
     }
 }
 
-// --- NAVEGAÇÃO E OUTROS ---
 function abrirFicha(matricula) {
-    if(!matricula) return alert("Matrícula não encontrada.");
     sessionStorage.setItem("matricula_selecionada", matricula);
     window.location.href = "ficha.html";
 }
 
 function logout() {
-    if(confirm("Deseja encerrar a sessão?")) {
+    if(confirm("Sair do sistema?")) {
         sessionStorage.clear();
         window.location.href = "../index.html";
     }
