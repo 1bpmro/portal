@@ -15,11 +15,9 @@ document.addEventListener("DOMContentLoaded", function() {
     renderizarCards(listaEfetivo);
 });
 
-// --- MELHORIA 1: Formatação de Datas (Para evitar o erro de 'ocultar' info) ---
+// --- FORMATAÇÃO DE DATAS ---
 function formatarInfo(valor) {
     if (!valor || valor === "") return "";
-    
-    // Se for uma data do Google Sheets (formato ISO), limpa para DD/MM/AAAA
     if (valor.toString().includes("T") && !isNaN(Date.parse(valor))) {
         const d = new Date(valor);
         return d.toLocaleDateString('pt-BR');
@@ -27,23 +25,22 @@ function formatarInfo(valor) {
     return valor;
 }
 
+// --- RENDERIZAÇÃO (ORDEM ALFABÉTICA PELA COLUNA C) ---
 function renderizarCards(dados) {
     const container = document.getElementById('container-cards');
     if (!container) return;
-    
     container.innerHTML = "";
 
+    // Ordenação A-Z por Nome Completo
     const dadosOrdenados = [...dados].sort((a, b) => {
-        // Garante que quem não tem antiguidade vá para o fim da fila
-        let antA = parseInt(a["ANTIGUID."]) || 9999;
-        let antB = parseInt(b["ANTIGUID."]) || 9999;
-        return antA - antB;
+        let nomeA = (a["NOME COMPLETO"] || "").toString().toUpperCase();
+        let nomeB = (b["NOME COMPLETO"] || "").toString().toUpperCase();
+        return nomeA.localeCompare(nomeB);
     });
 
     dadosOrdenados.forEach(mil => {
         const card = document.createElement('div');
         card.className = 'militar-card';
-        
         const matricula = mil["MATRÍCULA"];
         card.onclick = () => abrirFicha(matricula);
 
@@ -65,6 +62,7 @@ function renderizarCards(dados) {
     });
 }
 
+// --- PESQUISA ---
 function filtrar() {
     if (!listaEfetivo) return;
     const termo = document.getElementById('busca').value.toLowerCase().trim();
@@ -79,6 +77,41 @@ function filtrar() {
     renderizarCards(filtrados);
 }
 
+// --- CADASTRO DE NOVO MILITAR ---
+async function abrirModalNovo() {
+    const nome = prompt("Nome Completo:");
+    if (!nome) return;
+    const graduacao = prompt("Graduação (Ex: SD, CB, SGT):");
+    const matricula = prompt("Matrícula:");
+
+    if (!matricula) return alert("A matrícula é obrigatória!");
+
+    const dadosMilitar = {
+        "NOME COMPLETO": nome,
+        "GRADUAÇÃO": graduacao,
+        "MATRÍCULA": matricula,
+        "NOME GUERRA": nome.split(" ")[0].toUpperCase(),
+        "SITUAÇÃO": "ATIVO",
+        "FOTO": "" 
+    };
+
+    try {
+        const response = await fetch(CONFIG.URL_GAS, {
+            method: 'POST',
+            body: JSON.stringify({ action: "createMilitar", dados: dadosMilitar })
+        });
+        const res = await response.json();
+        if (res.success) {
+            alert("Sucesso! Clique em OK e depois no botão 🔄 para atualizar a lista.");
+        } else {
+            alert("Erro: " + res.message);
+        }
+    } catch (e) {
+        alert("Erro ao conectar com o servidor.");
+    }
+}
+
+// --- NAVEGAÇÃO ---
 function abrirFicha(matricula) {
     if(!matricula) return alert("Matrícula inválida.");
     sessionStorage.setItem("matricula_selecionada", matricula);
