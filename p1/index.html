@@ -6,117 +6,115 @@
     <title>Efetivo 1º BPM - P1</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-    * { box-sizing: border-box; } 
+        * { box-sizing: border-box; } 
 
-    /* ANULANDO O CONFLITO DO STYLE.CSS */
-    body { 
-        margin: 0; 
-        font-family: 'Segoe UI', sans-serif; 
-        background-color: #f0f2f5; 
-        display: block !important; /* Mata o flex do login */
-        height: auto !important;    /* Mata o 100vh do login */
-        overflow-y: auto !important; /* Garante que o scroll funcione */
-        overflow-x: hidden;
-    }
-    
-    .header-p1 {
-        background-color: #1a5c37;
-        color: white;
-        padding: 0 20px;
-        display: flex;
-        justify-content: center;
-        position: fixed; 
-        top: 0; left: 0; right: 0;
-        height: 85px; 
-        z-index: 2000;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
+        /* RESET PARA EVITAR CONFLITO COM LOGIN */
+        body { 
+            margin: 0; 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: #f0f2f5; 
+            display: block !important; 
+            height: auto !important; 
+            overflow-y: auto !important; 
+            overflow-x: hidden;
+        }
+        
+        .header-p1 {
+            background-color: #1a5c37;
+            color: white;
+            padding: 0 20px;
+            display: flex;
+            justify-content: center;
+            position: fixed; 
+            top: 0; left: 0; right: 0;
+            height: 85px; 
+            z-index: 2000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
 
-    .header-content {
-        width: 100%;
-        max-width: 1200px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
-    }
+        .header-content {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            height: 100%;
+        }
 
-    /* CALÇO PARA DESENTERRAR O CONTEÚDO */
-    .spacer {
-        height: 100px; 
-        width: 100%;
-    }
+        .spacer { height: 100px; width: 100%; }
 
-    #usuario-logado { font-weight: bold; font-size: 1.1rem; min-width: fit-content; }
+        #usuario-logado { font-weight: bold; font-size: 1.1rem; min-width: fit-content; }
 
-    .search-container { display: flex; gap: 10px; align-items: center; flex: 1; justify-content: flex-end; }
-    
-    input#busca { 
-        padding: 10px 18px; 
-        border-radius: 20px; 
-        border: none; 
-        width: 100%; 
-        max-width: 350px; 
-        outline: none; 
-        margin: 0; /* Remove margens do input do style.css */
-    }
+        .search-container { display: flex; gap: 8px; align-items: center; flex: 1; justify-content: flex-end; }
+        
+        input#busca { 
+            padding: 10px 18px; 
+            border-radius: 20px; 
+            border: none; 
+            width: 100%; 
+            max-width: 300px; 
+            outline: none; 
+            margin: 0;
+        }
 
-    .btn-header { color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 18px; transition: 0.3s; width: auto; /* Anula o width 100% do login */ }
-    .btn-logout { background-color: #d9534f; }
-    .btn-refresh { background-color: #f0ad4e; }
+        .btn-header { color: white; border: none; padding: 10px 14px; border-radius: 5px; cursor: pointer; font-size: 18px; transition: 0.3s; width: auto; }
+        .btn-logout { background-color: #d9534f; }
+        .btn-refresh { background-color: #f0ad4e; }
+        .btn-add { background-color: #28a745; }
 
-    .album-wrapper {
-        padding: 20px;
-        display: flex;
-        justify-content: center;
-        width: 100%;
-    }
+        .album-wrapper { padding: 20px; display: flex; justify-content: center; width: 100%; }
+        .grid-efetivo { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 25px; width: 100%; max-width: 1200px; margin: 0 auto; }
 
-    .grid-efetivo {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 25px; 
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
+        /* CARDS */
+        .militar-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s; cursor: pointer; text-align: center; border-bottom: 4px solid #1a5c37; }
+        .militar-card:hover { transform: translateY(-5px); }
+        .foto-container { width: 100%; height: 220px; background-color: #e9ecef; }
+        .foto-container img { width: 100%; height: 100%; object-fit: cover; }
+        .militar-info { padding: 12px; }
+        .graduacao { display: block; font-size: 0.8rem; color: #1a5c37; font-weight: bold; }
+        .nome-guerra { display: block; font-size: 1rem; color: #333; font-weight: bold; margin-top: 2px; }
 
-    /* Estilo dos Cards */
-    .militar-card { 
-        background: white; 
-        border-radius: 10px; 
-        overflow: hidden; 
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-        transition: 0.2s; 
-        cursor: pointer; 
-        text-align: center; 
-        border-bottom: 4px solid #1a5c37; 
-        width: 100%; /* Garante que preencha a coluna do grid */
-    }
-    .militar-card:hover { transform: translateY(-5px); }
-    .foto-container { width: 100%; height: 220px; background-color: #e9ecef; }
-    .foto-container img { width: 100%; height: 100%; object-fit: cover; }
-    .militar-info { padding: 12px; }
-    .graduacao { display: block; font-size: 0.8rem; color: #1a5c37; font-weight: bold; }
-    .nome-guerra { display: block; font-size: 1rem; color: #333; font-weight: bold; margin-top: 2px; }
-</style>
+        /* ESTILOS DO MODAL */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            z-index: 3000; 
+            left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.6); 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .modal-content { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 12px; 
+            width: 90%; 
+            max-width: 450px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h3 { margin: 0; color: #1a5c37; }
+        .modal-body label { display: block; font-size: 0.9rem; font-weight: bold; margin-top: 10px; color: #555; }
+        .modal-body input, .modal-body select { 
+            width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem;
+        }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+        .btn-acao { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-save { background-color: #1a5c37; color: white; }
+        .btn-cancel { background-color: #6c757d; color: white; }
+    </style>
 </head>
 <body>
+
     <header class="header-p1">
         <div class="header-content">
             <div id="usuario-logado">P1 - Carregando...</div>
             <div class="search-container">
                 <input type="text" id="busca" placeholder="🔍 Pesquisar militar..." onkeyup="filtrar()">
+                <button class="btn-header btn-add" onclick="abrirModalNovo()" title="Novo Militar">➕</button>
                 <button class="btn-header btn-refresh" onclick="atualizarDados()" title="Sincronizar">🔄</button>
                 <button class="btn-header btn-logout" onclick="logout()" title="Sair">🚪</button>
-
-        <div class="search-container">
-    <input type="text" id="busca" placeholder="🔍 Pesquisar militar..." onkeyup="filtrar()">
-    <button class="btn-header" style="background-color: #28a745;" onclick="abrirModalNovo()" title="Novo Militar">➕</button>
-    <button class="btn-header btn-refresh" onclick="atualizarDados()" title="Sincronizar">🔄</button>
-    <button class="btn-header btn-logout" onclick="logout()" title="Sair">🚪</button>
-</div>
-               
             </div>
         </div>
     </header>
@@ -126,6 +124,42 @@
     <main class="album-wrapper">
         <div class="grid-efetivo" id="container-cards"></div>
     </main>
+
+    <div id="modalNovoMilitar" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Novo Militar</h3>
+                <span style="cursor:pointer; font-size:24px" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <label>Nome Completo</label>
+                <input type="text" id="novo-nome" placeholder="Digite o nome completo">
+                
+                <label>Graduação</label>
+                <select id="novo-grad">
+                    <option value="CEL">Coronel</option>
+                    <option value="TC">Tenente Coronel</option>
+                    <option value="MAJ">Major</option>
+                    <option value="CAP">Capitão</option>
+                    <option value="1º TEN">1º Tenente</option>
+                    <option value="2º TEN">2º Tenente</option>
+                    <option value="SUB TEN">Subtenente</option>
+                    <option value="1º SGT">1º Sargento</option>
+                    <option value="2º SGT">2º Sargento</option>
+                    <option value="3º SGT">3º Sargento</option>
+                    <option value="CB">Cabo</option>
+                    <option value="SD">Soldado</option>
+                </select>
+
+                <label>Matrícula</label>
+                <input type="text" id="novo-mat" placeholder="000.000-0">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-acao btn-cancel" onclick="fecharModal()">Cancelar</button>
+                <button class="btn-acao btn-save" id="btnSalvarNovo" onclick="salvarNovoMilitar()">Salvar Cadastro</button>
+            </div>
+        </div>
+    </div>
 
     <script src="../js/config.js"></script>
     <script src="../js/auth.js"></script>
