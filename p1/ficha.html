@@ -119,9 +119,13 @@
     const inputs = document.querySelectorAll('.valor-input[data-label]');
     const dadosEditados = {};
 
+    // Coleta os dados dos inputs
     inputs.forEach(input => {
         dadosEditados[input.getAttribute('data-label')] = input.value;
     });
+
+    // Pega o link da foto atual da imagem no HTML
+    dadosEditados["FOTO"] = document.getElementById('imgPerfil').src;
 
     try {
         const response = await fetch(CONFIG.URL_GAS, {
@@ -134,9 +138,20 @@
         });
 
         const res = await response.json();
+        
         if (res.success) {
+            // --- ATUALIZAÇÃO DO CACHE LOCAL ---
+            let lista = JSON.parse(sessionStorage.getItem("lista_efetivo"));
+            const index = lista.findIndex(m => String(m["MATRÍCULA"]) === String(matricula));
+            
+            if (index !== -1) {
+                // Atualiza o objeto na lista local com os novos dados
+                lista[index] = { ...lista[index], ...dadosEditados };
+                sessionStorage.setItem("lista_efetivo", JSON.stringify(lista));
+            }
+
             alert("Sucesso! Os dados foram salvos na planilha.");
-            location.reload(); // Recarrega para atualizar o sessionStorage
+            window.location.reload(); 
         } else {
             alert("Erro: " + res.message);
         }
