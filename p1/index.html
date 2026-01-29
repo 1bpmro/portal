@@ -6,83 +6,100 @@
     <title>Efetivo 1º BPM - P1</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        * { box-sizing: border-box; } 
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; overflow-x: hidden; }
-        
-        .header-p1 {
-            background-color: #1a5c37;
-            color: white;
-            padding: 0 20px;
-            display: flex;
-            justify-content: center;
-            position: fixed; 
-            top: 0; left: 0; right: 0;
-            height: 85px; 
-            z-index: 2000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
+    * { box-sizing: border-box; } 
 
-        .header-content {
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-        }
+    /* ANULANDO O CONFLITO DO STYLE.CSS */
+    body { 
+        margin: 0; 
+        font-family: 'Segoe UI', sans-serif; 
+        background-color: #f0f2f5; 
+        display: block !important; /* Mata o flex do login */
+        height: auto !important;    /* Mata o 100vh do login */
+        overflow-y: auto !important; /* Garante que o scroll funcione */
+        overflow-x: hidden;
+    }
+    
+    .header-p1 {
+        background-color: #1a5c37;
+        color: white;
+        padding: 0 20px;
+        display: flex;
+        justify-content: center;
+        position: fixed; 
+        top: 0; left: 0; right: 0;
+        height: 85px; 
+        z-index: 2000;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
 
-        /* ESTE É O SEGREDO: Um calço que ocupa espaço real na página */
-        .spacer {
-            height: 100px; 
-            width: 100%;
-            display: block;
-        }
+    .header-content {
+        width: 100%;
+        max-width: 1200px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
 
-        #usuario-logado { font-weight: bold; font-size: 1.1rem; min-width: fit-content; }
+    /* CALÇO PARA DESENTERRAR O CONTEÚDO */
+    .spacer {
+        height: 100px; 
+        width: 100%;
+    }
 
-        .search-container { display: flex; gap: 10px; align-items: center; flex: 1; justify-content: flex-end; }
-        
-        input#busca { 
-            padding: 10px 18px; 
-            border-radius: 20px; 
-            border: none; 
-            width: 100%; 
-            max-width: 350px; 
-            outline: none; 
-        }
+    #usuario-logado { font-weight: bold; font-size: 1.1rem; min-width: fit-content; }
 
-        .btn-header { color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 18px; transition: 0.3s; }
-        .btn-logout { background-color: #d9534f; }
-        .btn-refresh { background-color: #f0ad4e; }
+    .search-container { display: flex; gap: 10px; align-items: center; flex: 1; justify-content: flex-end; }
+    
+    input#busca { 
+        padding: 10px 18px; 
+        border-radius: 20px; 
+        border: none; 
+        width: 100%; 
+        max-width: 350px; 
+        outline: none; 
+        margin: 0; /* Remove margens do input do style.css */
+    }
 
-        .album-wrapper {
-            margin-top: 0 !important; /* Remove qualquer puxão para cima */
-            padding-top: 20px !important; 
-            padding-bottom: 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            min-height: 100vh;
-        }
+    .btn-header { color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 18px; transition: 0.3s; width: auto; /* Anula o width 100% do login */ }
+    .btn-logout { background-color: #d9534f; }
+    .btn-refresh { background-color: #f0ad4e; }
 
-        .grid-efetivo {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 25px; 
-            width: 95%;
-            max-width: 1200px;
-            margin: 0 auto !important; /* Centraliza sem margens extras */
-        }
+    .album-wrapper {
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
 
-        .militar-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s; cursor: pointer; text-align: center; border-bottom: 4px solid #1a5c37; }
-        .militar-card:hover { transform: translateY(-5px); }
-        .foto-container { width: 100%; height: 220px; background-color: #e9ecef; }
-        .foto-container img { width: 100%; height: 100%; object-fit: cover; }
-        .militar-info { padding: 12px; }
-        .graduacao { display: block; font-size: 0.8rem; color: #1a5c37; font-weight: bold; }
-        .nome-guerra { display: block; font-size: 1rem; color: #333; font-weight: bold; margin-top: 2px; }
-    </style>
+    .grid-efetivo {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 25px; 
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Estilo dos Cards */
+    .militar-card { 
+        background: white; 
+        border-radius: 10px; 
+        overflow: hidden; 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        transition: 0.2s; 
+        cursor: pointer; 
+        text-align: center; 
+        border-bottom: 4px solid #1a5c37; 
+        width: 100%; /* Garante que preencha a coluna do grid */
+    }
+    .militar-card:hover { transform: translateY(-5px); }
+    .foto-container { width: 100%; height: 220px; background-color: #e9ecef; }
+    .foto-container img { width: 100%; height: 100%; object-fit: cover; }
+    .militar-info { padding: 12px; }
+    .graduacao { display: block; font-size: 0.8rem; color: #1a5c37; font-weight: bold; }
+    .nome-guerra { display: block; font-size: 1rem; color: #333; font-weight: bold; margin-top: 2px; }
+</style>
 </head>
 <body>
     <header class="header-p1">
