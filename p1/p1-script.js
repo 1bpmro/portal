@@ -37,8 +37,8 @@ function renderizarCards(dados) {
         } else {
             // Pega o valor da 3ª coluna (índice 2) ou da chave "NOME COMPLETO"
             const chaves = Object.keys(a);
-            let nomeA = (a["NOME COMPLETO"] || a[chaves[2]] || "").toString().toUpperCase();
-            let nomeB = (b["NOME COMPLETO"] || b[chaves[2]] || "").toString().toUpperCase();
+            let nomeA = (a["NOME GUERRA"] || a[chaves[2]] || "").toString().toUpperCase();
+            let nomeB = (b["NOME GUERRA"] || b[chaves[2]] || "").toString().toUpperCase();
             return nomeA.localeCompare(nomeB);
         }
     });
